@@ -38,7 +38,7 @@ The code imports the **svgpathtools** library. Using the RoboDK built in Python 
 pip install svgpathtools
 ```
 
-On the same link, you can find information on changing the text editor to one of your liking.
+On the same link, you can find information on changing the text editor to one of your liking. **Note:** If you open the script on a text editor and modify it, the changes will not be reflected on the RoboDK script, as this are not the same. The RoboDK project stores the script on a temp folder. Therefore, changes to the script file will not be reflected on the simulation, if made outside of RoboDK. There is also a known issue where in Ubuntu, changes to the script from inside RoboDK using the Python Idle might not be saved.
 
 After setting up Python with the needed libraries, test the script by double clicking on it. The robot should start drawing a flower!
 
@@ -50,7 +50,27 @@ A nice aspect of simulating is that we can speed up the process. On the toolbar,
 
 ![](images/Speedup.jpg)
 
-**Important:** The implementation of how the robot moves should not be modified. We have provided a pipeline that takes an SVG file as input, and performs the motion of the robot so that it draws said SVG. Your task is to implement a user interface which outputs a valid SVG for the robot to draw. How it outputs it is completely up to you! Search for images online? Make the user draw and convert that to an SVG? Tell an AI to give you a drawing? The freedom is yours!
+**Important:** The implementation of how the robot moves should not be modified. We have provided a pipeline that takes an SVG file as input, and performs the motion of the robot so that it draws said SVG. While you can modify it if you want, know that when operating the real robot, we will be using the original script. 
+
+Your task is to implement a user interface which outputs a valid SVG for the robot to draw. How it outputs it is completely up to you! Search for images online? Make the user draw and convert that to an SVG? Tell an AI to give you a drawing? The freedom is yours!
 
 ## Scalable Vector Graphics
 
+An SVG is an XML-based vector image format. They are resolution-independent, meaning they can be scaled in size without loss of quality. Instead of an array of pixels of different colors, an SVG defines shapes using math. You can [read more](https://www.w3schools.com/graphics/svg_intro.asp) about how to create an SVG, or how to make sense of one you've found online. It is important to understand the different elements found on an SVG (\<circle>, \<line>, \<path>, etc).
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Bitmap_VS_SVG.svg/440px-Bitmap_VS_SVG.svg.png)
+
+We mentioned that the python script takes in a **valid** SVG before. This refers to SVG's that the svgpathtools parser can decompose into a series of paths for the robot to follow. As you will most likely see, the parser can be quite picky. The parsing and transformation from an SVG to a series of path the robot can follow are done by the **svg2paths** method, the implementiation of which can be found [here](https://github.com/mathandy/svgpathtools/blob/master/svgpathtools/svg_to_paths.py).
+
+To see the XML code behind an SVG, simply open it with a text editor. If you are using VSCode and the editor shows the image, right click on the file's tab and choose **Re-open Editor With...**, which will allow you to choose between seeing the SVG as an image or as code.
+
+## Further Resources
+
+- [Inkscape](https://inkscape.org/) for creating and working with SVG's.
+- For more details on RoboDK, check out their [documentation](https://robodk.com/doc/en/Getting-Started.html).
+- Recent [paper](https://arxiv.org/pdf/2308.11187) discussing algorithms for converting images to line art.
+- Youtube [video](https://www.youtube.com/watch?v=K-WPry8ltXU) of the state of the art.
+- [Git repository](https://gitlab.lrz.de/hackathon_image_conversion/image_conversion) for creating line drawings from photographs.
+- The SVG extension in VSCode.
+
+Can't reach me in person or through the given communication channels? Write me an email to ignacio.dassori@robotum.info.
