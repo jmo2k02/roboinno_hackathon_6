@@ -11,9 +11,3 @@ async def generate_svg_from_prompt(md_text: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    
-@router.post("/render_from_png")
-async def render_svg_from_png(
-    file: UploadFile
-):
-    
