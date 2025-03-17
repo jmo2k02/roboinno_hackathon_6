@@ -3,7 +3,8 @@ import uvicorn
 def run_app():
     uvicorn.run(
         "cobot.main:app",
-        reload=True
+        reload=True,
+        host="0.0.0.0",
     )
     
     
