@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "openapi-ts": "openapi-ts"
   },
   "dependencies": {
+    "@hey-api/client-axios": "^0.6.2",
+    "@hey-api/openapi-ts": "^0.64.12",
     "@tanstack/react-query": "^5.68.0",
     "@tanstack/react-query-devtools": "^5.68.0",
     "@tanstack/react-router": "^1.114.23",
