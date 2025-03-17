@@ -11,5 +11,3 @@ dependencies = [
     "uvicorn>=0.34.0",
 ]
 
-[project.scripts]
-cobot = "cobot:run_app"
