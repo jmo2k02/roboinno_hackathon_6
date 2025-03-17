@@ -8,4 +8,8 @@ dependencies = [
     "fastapi>=0.115.11",
     "loguru>=0.7.3",
     "pydantic>=2.10.6",
+    "uvicorn>=0.34.0",
 ]
+
+[project.scripts]
+cobot = "cobot:run_app"
