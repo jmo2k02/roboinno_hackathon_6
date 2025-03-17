@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 from loguru import logger
-import uvicorn
 from fastapi import FastAPI
 
 @asynccontextmanager
@@ -19,16 +18,11 @@ async def lifespan(app: FastAPI):
 
 def create_app():
 
-    app = FastAPI()
+    app = FastAPI(
+        lifespan=lifespan
+    )
     
     return app
     
 app = create_app()
 
-def run_app():
-    uvicorn.run(
-        "cobot.main:app",
-        reload=True
-    )
-    
-    
