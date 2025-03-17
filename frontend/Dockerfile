@@ -13,6 +13,8 @@ RUN npm install
 # Install Angular CLI globally
 RUN npm install -g @angular/cli
 
+RUN npm install primeng primeicons
+
 # Copy the entire project
 COPY . .
 
