@@ -19,7 +19,6 @@ robolink.import_install('svgpathtools')
 # IMAGE_FILE = "https://upload.wikimedia.org/wikipedia/de/5/56/FC_Bayern_M%C3%BCnchen_Logo_%281923-1954%29.svg"
 # Bayern Logo with starts
 # IMAGE_FILE = "https://upload.wikimedia.org/wikipedia/de/c/c5/FC_Bayern_Muenchen_Wappen_5_Sterne.svg"
-IMAGE_FILE = "svg/drawing.svg"
 
 BOARD_WIDTH, BOARD_HEIGHT = 400, 400  # Size of the drawing area
 APPROACH = 25.0  # mm, approach distance for each path, 25mm is a good start
@@ -62,7 +61,7 @@ def draw_image(path_or_url: str):
         quit()
 
     paths, path_attribs, svg_attribs = spt.svg2paths2(path_or_url)
-    flip_svg_y(paths)
+    paths = flip_svg_y(paths)
 
 
     # Scale the SVG to fit in the desired drawing area
