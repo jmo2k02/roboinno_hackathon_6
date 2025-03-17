@@ -2,3 +2,4 @@ src/backend/cobot/.venv
 *venv*
 *.venv*
 *__p*
+./frontend/node_modules
