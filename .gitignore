@@ -1,2 +1,4 @@
 src/backend/.venv
+*venv*
+*.venv*
 *__p*
