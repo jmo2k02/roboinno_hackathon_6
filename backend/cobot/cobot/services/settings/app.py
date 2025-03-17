@@ -8,7 +8,7 @@ from ._base import BaseAppSettings
 class AppSettings(BaseAppSettings):
     """Application-specific settings"""
     
-    APP_NAME: str = "pPOS"
+    APP_NAME: str = "cobot"
     APP_VERSION: str = "0.1.0"
 
     @computed_field

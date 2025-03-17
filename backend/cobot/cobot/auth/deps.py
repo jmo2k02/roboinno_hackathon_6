@@ -4,7 +4,7 @@ from fastapi import Depends, Query
 
 from cobot.services.deps import get_settings_service
 from cobot.exceptions import AuthorizationError
-from .model import Token, TokenData
+from cobot.schemas.token import Token, TokenData
 
 
 def validate_token(token: str = Query(..., description="Auth token")) -> TokenData:
