@@ -9,6 +9,7 @@ dependencies = [
     "loguru>=0.7.3",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.1",
+    "python-multipart>=0.0.20",
     "uvicorn>=0.34.0",
 ]
 

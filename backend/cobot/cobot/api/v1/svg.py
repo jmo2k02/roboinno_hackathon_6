@@ -9,5 +9,5 @@ async def generate_svg_from_prompt(md_text: str):
     try:
         return Response()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
