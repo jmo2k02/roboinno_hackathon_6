@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AppMenuComponent } from "./app-menu.component";
-import { AppTopbarComponent } from "./app-topbar.component";
+import { AppMenuComponent } from "../app-menu/app-menu.component";
+import { AppTopbarComponent } from "../app-topbar/app-topbar.component";
 import { RouterOutlet } from '@angular/router';
 
 @Component({

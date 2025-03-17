@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { LinkDirective } from './modules/shared/directives/link.directive';
+import { LinkDirective } from '../modules/shared/directives/link.directive';
 
 type NavItem = {
 name: string;
