@@ -1,4 +1,4 @@
-src/backend/.venv
+src/backend/cobot/.venv
 *venv*
 *.venv*
 *__p*
