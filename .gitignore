@@ -1,2 +1,3 @@
 src/backend/.venv
 *__p*
+./frontend/node_modules
