@@ -3,7 +3,7 @@ from fastapi.responses import Response
 
 router = APIRouter()
 
-@router.post("/generate_svg")
+@router.post("/generate")
 async def generate_svg(md_text: str):
     """API endpoint to generate SVG from prompt."""
     try:

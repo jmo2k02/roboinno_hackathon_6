@@ -8,6 +8,7 @@ dependencies = [
     "fastapi>=0.115.11",
     "loguru>=0.7.3",
     "pydantic>=2.10.6",
+    "pydantic-settings>=2.8.1",
     "uvicorn>=0.34.0",
 ]
 

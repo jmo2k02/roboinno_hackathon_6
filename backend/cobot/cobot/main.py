@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 from loguru import logger
 from fastapi import FastAPI
-from cobot.api.v1.svg import router as svg_router
+
+from cobot.api.router import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,9 +21,11 @@ async def lifespan(app: FastAPI):
 def create_app():
 
     app = FastAPI(
-        lifespan=lifespan
+        lifespan=lifespan,
+        docs_url="/api/docs",
+        openapi_url="/api/openapi.json"
     )
-    app.include_router(svg_router)
+    app.include_router(router)
     
     return app
     
