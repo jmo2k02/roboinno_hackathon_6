@@ -21,5 +21,14 @@ async def run_robot_using_svg(
         )
     msg = f"Got file {svg_file.filename}"
     logger.debug(msg)
-    
-    
+
+
+@router.post("/run-with-image")
+async def run_robot_using_image(
+    img_file: Annotated[
+        UploadFile, File(description="Image file that should be used by the robot to paint")
+    ]
+):
+    """Take an image file as input turn it into a svg, then make the robot paint it"""
+    # TODO Implement
+    raise NotImplementedError()
