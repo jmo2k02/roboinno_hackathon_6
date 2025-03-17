@@ -61,8 +61,6 @@ def draw_image(path_or_url: str):
         quit()
 
     paths, path_attribs, svg_attribs = spt.svg2paths2(path_or_url)
-    paths = flip_svg_y(paths)
-
 
     # Scale the SVG to fit in the desired drawing area
     # 1. Find the bounding area
