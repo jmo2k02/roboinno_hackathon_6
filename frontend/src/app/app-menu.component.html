@@ -1,0 +1,13 @@
+<div class="sidebar">
+      <ul class="menu">
+      @for (item of items; track i; let i = $index) {
+        <li class="menu-item">
+          <a href="{{item.link}}" class="menu-link">
+            <span class="material-icons">{{item.icon}}</span>
+            <span class="label">{{item.name}}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+  
