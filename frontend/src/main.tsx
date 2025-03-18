@@ -5,6 +5,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 import './styles.css'
+import { client } from './client/client.gen'
 
 // Create a new router instance
 const router = createRouter({ routeTree })
@@ -23,6 +24,14 @@ const queryClient = new QueryClient({
       
     }
   }
+})
+
+client.setConfig({
+    baseURL: 'http://localhost:8000',
+})
+client.instance.interceptors.request.use(config => {
+    config.headers.set('Authorization', `Bearer ${localStorage.getItem('access_token')}`)
+    return config
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

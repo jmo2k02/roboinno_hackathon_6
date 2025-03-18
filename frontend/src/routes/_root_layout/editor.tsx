@@ -5,5 +5,12 @@ export const Route = createFileRoute('/_root_layout/editor')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/editor"!</div>
+  return (
+    <>
+  
+      <iframe content='https://www.youtube.com/watch?v=Rf2hW_ckl380'>
+
+      </iframe>
+    </>
+  )
 }

@@ -1,7 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input: './openapi.json',
+  input: 'http://127.0.0.1:8000/api/openapi.json',
   output: {
     path: 'src/client',
     format: 'biome',
