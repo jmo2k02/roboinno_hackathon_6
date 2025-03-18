@@ -63,8 +63,6 @@ def get_svg_url_from_prompt(prompt):
     while not response and num_retry < NUM_RETRY:  # Retry if no response and retry count is not exceeded
         payload = get_payload_template()  # Get a copy of the payload template
         payload["prompt"] = prompt  # Set the prompt in the payload
-        payload["style"] = 'line_art',
-        payload["detail_level"] = "minimal",
         response = call_api(URL_SVGSTUDIO, params=payload)  # Call the API with the current payload
         num_retry += 1  # Increment retry count
     return response
