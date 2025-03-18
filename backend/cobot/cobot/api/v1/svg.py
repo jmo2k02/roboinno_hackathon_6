@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile, Body
 from fastapi.responses import Response
 from fastapi import APIRouter, HTTPException
 from fastapi import FastAPI, File, UploadFile
@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/generate_svg_from_prompt")
-async def generate_svg_from_prompt(text: str):
+async def generate_svg_from_prompt(text: str = Body(..., embed=True)):
     """API endpoint to generate SVG from prompt."""
     try:
         svg = get_svg_from_prompt(text)
