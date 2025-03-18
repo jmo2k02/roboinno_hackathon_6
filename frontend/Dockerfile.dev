@@ -3,7 +3,7 @@ FROM node:lts-alpine3.19
 WORKDIR /app
 
 # Copy package.json and package-lock.json (if available)
-COPY ./cad2ai-frontend/package*.json ./
+COPY ./package*.json ./
 
 # Install dependencies
 RUN npm install
