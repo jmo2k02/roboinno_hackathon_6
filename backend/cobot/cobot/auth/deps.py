@@ -17,4 +17,5 @@ def validate_token(token: str = Query(..., description="Auth token")) -> TokenDa
     else:
         # TODO add proper authentication
         raise AuthorizationError("Token not authorized")
+
 ValidateTokenDep = Annotated[TokenData, Depends(validate_token)]
