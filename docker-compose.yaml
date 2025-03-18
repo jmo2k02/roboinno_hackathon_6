@@ -10,4 +10,7 @@ services:
     volumes:
       - ./backend/cobot/cobot:/app/cobot
 
-  # frontend:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev

@@ -28,7 +28,7 @@ async def summarize_text(text: TextToSumUp, openai_client: OpenAIDep):
 
         # Extract the summary from the response
         summary = response.choices[0].message.content.strip()
-
+        
         return SumUpResponse(text=summary)
 
     except Exception as e:
