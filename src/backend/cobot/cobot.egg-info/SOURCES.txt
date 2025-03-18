@@ -1,0 +1,14 @@
+README.md
+pyproject.toml
+cobot/__main__.py
+cobot/main.py
+cobot.egg-info/PKG-INFO
+cobot.egg-info/SOURCES.txt
+cobot.egg-info/dependency_links.txt
+cobot.egg-info/requires.txt
+cobot.egg-info/top_level.txt
+cobot/api/__init__.py
+cobot/api/v1/__init__.py
+cobot/api/v1/svg.py
+cobot/auth/__init__.py
+cobot/llm/__init__.py
