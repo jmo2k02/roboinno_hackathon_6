@@ -1,0 +1,326 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/v1/svg/generate_from_prompt": {
+            "post": {
+                "tags": [
+                    "svg"
+                ],
+                "summary": "Generate Svg From Prompt",
+                "description": "API endpoint to generate SVG from prompt.",
+                "operationId": "generate_svg_from_prompt_api_v1_svg_generate_from_prompt_post",
+                "parameters": [
+                    {
+                        "name": "md_text",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Md Text"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Auth token",
+                            "title": "Token"
+                        },
+                        "description": "Auth token"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/robot/run_with_svg": {
+            "post": {
+                "tags": [
+                    "robot"
+                ],
+                "summary": "Run Robot Using Svg",
+                "operationId": "run_robot_using_svg_api_v1_robot_run_with_svg_post",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Auth token",
+                            "title": "Token"
+                        },
+                        "description": "Auth token"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_run_robot_using_svg_api_v1_robot_run_with_svg_post"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/robot/run-with-image": {
+            "post": {
+                "tags": [
+                    "robot"
+                ],
+                "summary": "Run Robot Using Image",
+                "description": "Take an image file as input turn it into a svg, then make the robot paint it",
+                "operationId": "run_robot_using_image_api_v1_robot_run_with_image_post",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Auth token",
+                            "title": "Token"
+                        },
+                        "description": "Auth token"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_run_robot_using_image_api_v1_robot_run_with_image_post"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/gptsummarize": {
+            "post": {
+                "tags": [
+                    "gpt"
+                ],
+                "summary": "Summarize Text",
+                "operationId": "summarize_text_api_v1_gptsummarize_post",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Auth token",
+                            "title": "Token"
+                        },
+                        "description": "Auth token"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TextToSumUp"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SumUpResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Body_run_robot_using_image_api_v1_robot_run_with_image_post": {
+                "properties": {
+                    "img_file": {
+                        "type": "string",
+                        "format": "binary",
+                        "title": "Img File",
+                        "description": "Image file that should be used by the robot to paint"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "img_file"
+                ],
+                "title": "Body_run_robot_using_image_api_v1_robot_run_with_image_post"
+            },
+            "Body_run_robot_using_svg_api_v1_robot_run_with_svg_post": {
+                "properties": {
+                    "svg_file": {
+                        "type": "string",
+                        "format": "binary",
+                        "title": "Svg File",
+                        "description": "SVG file that is used to run the model"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "svg_file"
+                ],
+                "title": "Body_run_robot_using_svg_api_v1_robot_run_with_svg_post"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "SumUpResponse": {
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "title": "Text"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "text"
+                ],
+                "title": "SumUpResponse"
+            },
+            "TextToSumUp": {
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "title": "Text"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "text"
+                ],
+                "title": "TextToSumUp"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

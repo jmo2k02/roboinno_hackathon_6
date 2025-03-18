@@ -1,0 +1,26 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-W-dark);
+
+}
+
+.middle {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  min-height: 0px;
+
+  main {
+    display: grid;
+    overflow: auto;
+    flex-grow: 1;
+
+    > div {
+      padding: var(--spacing-m);
+      min-width: 0px;
+      position: relative;
+    }
+  }
+}
