@@ -34,7 +34,7 @@ async def run_robot_using_svg(
     logger.info("Sucessfuly stored file.")
 
     try:
-        logger.info("Starting process from endpoint.")
+        #logger.info("Starting process from endpoint.")
 
         # Run the script synchronously and wait until it completes TODO: change to asynchronous when working
         #result = subprocess.run(["python3", SCRIPT_PATH, file_location], capture_output=True, text=True, check=True)
@@ -62,8 +62,18 @@ async def run_robot_using_image(
         UploadFile, File(description="Image file that should be used by the robot to paint")
     ]
 ):
-    """Take an image file as input turn it into a svg, then make the robot paint it"""
-    # TODO Implement
-    raise NotImplementedError()
+    msg = f"Got file {img_file.filename}"
+    logger.debug(msg)
+    file_dir = os.path.abspath(os.path.join(os.getcwd(), UPLOAD_DIR))
+    file_location = os.path.join(file_dir, img_file.filename)
+
+    with open(file_location, "wb") as f:
+        f.write(await img_file.read())
+
+
+    logger.info("Successfully stored file.")
+
+
+
 
 
