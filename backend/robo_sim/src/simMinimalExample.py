@@ -8,7 +8,7 @@ import qpsolvers as qp
 import math
 #from src.controller import PI_controller
 
-def simMinimalExample():
+def simMinimalExample(backend: Swift):
 
     letter = "T"
 
@@ -58,7 +58,6 @@ def simMinimalExample():
         return ev, approx_integral
 
     # Use swift for visualistion 
-    backend = Swift()
     backend.launch(realtime=True, browser="google-chrome")
     dt = 0.025
     t = 0
@@ -211,3 +210,5 @@ def simMinimalExample():
 
         # step visualisation
         backend.step(dt)
+
+    backend.hold()

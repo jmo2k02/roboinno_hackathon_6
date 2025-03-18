@@ -1,8 +1,11 @@
 
 from getPathFromDrawSvg import getPathFromSvg
 from simMinimalExample import simMinimalExample
+from swift import Swift
 
-
-if __name__ == "__main__":
-    getPathFromSvg()
-    simMinimalExample()
+# print("Here 1")
+# getPathFromSvg()
+# print("Here 2")
+BACKEND = Swift()
+simMinimalExample(BACKEND)
+print("Here 3")

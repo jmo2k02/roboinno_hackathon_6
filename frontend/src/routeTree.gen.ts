@@ -11,21 +11,15 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as TextImport } from './routes/text'
 import { Route as RootlayoutImport } from './routes/_root_layout'
 import { Route as EditIndexImport } from './routes/edit/index'
 import { Route as RootlayoutIndexImport } from './routes/_root_layout/index'
 import { Route as RootlayoutVoiceImport } from './routes/_root_layout/voice'
 import { Route as RootlayoutUploadImport } from './routes/_root_layout/upload'
+import { Route as RootlayoutTextImport } from './routes/_root_layout/text'
 import { Route as RootlayoutEditorImport } from './routes/_root_layout/editor'
 
 // Create/Update Routes
-
-const TextRoute = TextImport.update({
-  id: '/text',
-  path: '/text',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const RootlayoutRoute = RootlayoutImport.update({
   id: '/_root_layout',
@@ -56,6 +50,12 @@ const RootlayoutUploadRoute = RootlayoutUploadImport.update({
   getParentRoute: () => RootlayoutRoute,
 } as any)
 
+const RootlayoutTextRoute = RootlayoutTextImport.update({
+  id: '/text',
+  path: '/text',
+  getParentRoute: () => RootlayoutRoute,
+} as any)
+
 const RootlayoutEditorRoute = RootlayoutEditorImport.update({
   id: '/editor',
   path: '/editor',
@@ -73,18 +73,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RootlayoutImport
       parentRoute: typeof rootRoute
     }
-    '/text': {
-      id: '/text'
-      path: '/text'
-      fullPath: '/text'
-      preLoaderRoute: typeof TextImport
-      parentRoute: typeof rootRoute
-    }
     '/_root_layout/editor': {
       id: '/_root_layout/editor'
       path: '/editor'
       fullPath: '/editor'
       preLoaderRoute: typeof RootlayoutEditorImport
+      parentRoute: typeof RootlayoutImport
+    }
+    '/_root_layout/text': {
+      id: '/_root_layout/text'
+      path: '/text'
+      fullPath: '/text'
+      preLoaderRoute: typeof RootlayoutTextImport
       parentRoute: typeof RootlayoutImport
     }
     '/_root_layout/upload': {
@@ -122,6 +122,7 @@ declare module '@tanstack/react-router' {
 
 interface RootlayoutRouteChildren {
   RootlayoutEditorRoute: typeof RootlayoutEditorRoute
+  RootlayoutTextRoute: typeof RootlayoutTextRoute
   RootlayoutUploadRoute: typeof RootlayoutUploadRoute
   RootlayoutVoiceRoute: typeof RootlayoutVoiceRoute
   RootlayoutIndexRoute: typeof RootlayoutIndexRoute
@@ -129,6 +130,7 @@ interface RootlayoutRouteChildren {
 
 const RootlayoutRouteChildren: RootlayoutRouteChildren = {
   RootlayoutEditorRoute: RootlayoutEditorRoute,
+  RootlayoutTextRoute: RootlayoutTextRoute,
   RootlayoutUploadRoute: RootlayoutUploadRoute,
   RootlayoutVoiceRoute: RootlayoutVoiceRoute,
   RootlayoutIndexRoute: RootlayoutIndexRoute,
@@ -140,8 +142,8 @@ const RootlayoutRouteWithChildren = RootlayoutRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof RootlayoutRouteWithChildren
-  '/text': typeof TextRoute
   '/editor': typeof RootlayoutEditorRoute
+  '/text': typeof RootlayoutTextRoute
   '/upload': typeof RootlayoutUploadRoute
   '/voice': typeof RootlayoutVoiceRoute
   '/': typeof RootlayoutIndexRoute
@@ -149,8 +151,8 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
-  '/text': typeof TextRoute
   '/editor': typeof RootlayoutEditorRoute
+  '/text': typeof RootlayoutTextRoute
   '/upload': typeof RootlayoutUploadRoute
   '/voice': typeof RootlayoutVoiceRoute
   '/': typeof RootlayoutIndexRoute
@@ -160,8 +162,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_root_layout': typeof RootlayoutRouteWithChildren
-  '/text': typeof TextRoute
   '/_root_layout/editor': typeof RootlayoutEditorRoute
+  '/_root_layout/text': typeof RootlayoutTextRoute
   '/_root_layout/upload': typeof RootlayoutUploadRoute
   '/_root_layout/voice': typeof RootlayoutVoiceRoute
   '/_root_layout/': typeof RootlayoutIndexRoute
@@ -170,14 +172,14 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/text' | '/editor' | '/upload' | '/voice' | '/' | '/edit'
+  fullPaths: '' | '/editor' | '/text' | '/upload' | '/voice' | '/' | '/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/text' | '/editor' | '/upload' | '/voice' | '/' | '/edit'
+  to: '/editor' | '/text' | '/upload' | '/voice' | '/' | '/edit'
   id:
     | '__root__'
     | '/_root_layout'
-    | '/text'
     | '/_root_layout/editor'
+    | '/_root_layout/text'
     | '/_root_layout/upload'
     | '/_root_layout/voice'
     | '/_root_layout/'
@@ -187,13 +189,11 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   RootlayoutRoute: typeof RootlayoutRouteWithChildren
-  TextRoute: typeof TextRoute
   EditIndexRoute: typeof EditIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   RootlayoutRoute: RootlayoutRouteWithChildren,
-  TextRoute: TextRoute,
   EditIndexRoute: EditIndexRoute,
 }
 
@@ -208,7 +208,6 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_root_layout",
-        "/text",
         "/edit/"
       ]
     },
@@ -216,16 +215,18 @@ export const routeTree = rootRoute
       "filePath": "_root_layout.tsx",
       "children": [
         "/_root_layout/editor",
+        "/_root_layout/text",
         "/_root_layout/upload",
         "/_root_layout/voice",
         "/_root_layout/"
       ]
     },
-    "/text": {
-      "filePath": "text.tsx"
-    },
     "/_root_layout/editor": {
       "filePath": "_root_layout/editor.tsx",
+      "parent": "/_root_layout"
+    },
+    "/_root_layout/text": {
+      "filePath": "_root_layout/text.tsx",
       "parent": "/_root_layout"
     },
     "/_root_layout/upload": {
