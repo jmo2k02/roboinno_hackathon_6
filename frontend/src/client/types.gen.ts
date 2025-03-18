@@ -68,10 +68,10 @@ export type ReturnListApiV1HealthTestListGetResponses = {
 export type ReturnListApiV1HealthTestListGetResponse = ReturnListApiV1HealthTestListGetResponses[keyof ReturnListApiV1HealthTestListGetResponses];
 
 export type GenerateSvgFromPromptApiV1SvgGenerateFromPromptPostData = {
-    body?: never;
+    body: {text: string;};
     path?: never;
     query: {
-        md_text: string;
+        
         /**
          * Auth token
          */
