@@ -13,8 +13,10 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as TextImport } from './routes/text'
 import { Route as RootlayoutImport } from './routes/_root_layout'
-import { Route as IndexImport } from './routes/index'
 import { Route as EditIndexImport } from './routes/edit/index'
+import { Route as RootlayoutIndexImport } from './routes/_root_layout/index'
+import { Route as RootlayoutVoiceImport } from './routes/_root_layout/voice'
+import { Route as RootlayoutEditorImport } from './routes/_root_layout/editor'
 
 // Create/Update Routes
 
@@ -29,29 +31,34 @@ const RootlayoutRoute = RootlayoutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const EditIndexRoute = EditIndexImport.update({
   id: '/edit/',
   path: '/edit/',
   getParentRoute: () => rootRoute,
 } as any)
 
+const RootlayoutIndexRoute = RootlayoutIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RootlayoutRoute,
+} as any)
+
+const RootlayoutVoiceRoute = RootlayoutVoiceImport.update({
+  id: '/voice',
+  path: '/voice',
+  getParentRoute: () => RootlayoutRoute,
+} as any)
+
+const RootlayoutEditorRoute = RootlayoutEditorImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => RootlayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
     '/_root_layout': {
       id: '/_root_layout'
       path: ''
@@ -66,6 +73,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TextImport
       parentRoute: typeof rootRoute
     }
+    '/_root_layout/editor': {
+      id: '/_root_layout/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof RootlayoutEditorImport
+      parentRoute: typeof RootlayoutImport
+    }
+    '/_root_layout/voice': {
+      id: '/_root_layout/voice'
+      path: '/voice'
+      fullPath: '/voice'
+      preLoaderRoute: typeof RootlayoutVoiceImport
+      parentRoute: typeof RootlayoutImport
+    }
+    '/_root_layout/': {
+      id: '/_root_layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof RootlayoutIndexImport
+      parentRoute: typeof RootlayoutImport
+    }
     '/edit/': {
       id: '/edit/'
       path: '/edit'
@@ -78,47 +106,73 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface RootlayoutRouteChildren {
+  RootlayoutEditorRoute: typeof RootlayoutEditorRoute
+  RootlayoutVoiceRoute: typeof RootlayoutVoiceRoute
+  RootlayoutIndexRoute: typeof RootlayoutIndexRoute
+}
+
+const RootlayoutRouteChildren: RootlayoutRouteChildren = {
+  RootlayoutEditorRoute: RootlayoutEditorRoute,
+  RootlayoutVoiceRoute: RootlayoutVoiceRoute,
+  RootlayoutIndexRoute: RootlayoutIndexRoute,
+}
+
+const RootlayoutRouteWithChildren = RootlayoutRoute._addFileChildren(
+  RootlayoutRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '': typeof RootlayoutRoute
+  '': typeof RootlayoutRouteWithChildren
   '/text': typeof TextRoute
+  '/editor': typeof RootlayoutEditorRoute
+  '/voice': typeof RootlayoutVoiceRoute
+  '/': typeof RootlayoutIndexRoute
   '/edit': typeof EditIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '': typeof RootlayoutRoute
   '/text': typeof TextRoute
+  '/editor': typeof RootlayoutEditorRoute
+  '/voice': typeof RootlayoutVoiceRoute
+  '/': typeof RootlayoutIndexRoute
   '/edit': typeof EditIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/_root_layout': typeof RootlayoutRoute
+  '/_root_layout': typeof RootlayoutRouteWithChildren
   '/text': typeof TextRoute
+  '/_root_layout/editor': typeof RootlayoutEditorRoute
+  '/_root_layout/voice': typeof RootlayoutVoiceRoute
+  '/_root_layout/': typeof RootlayoutIndexRoute
   '/edit/': typeof EditIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/text' | '/edit'
+  fullPaths: '' | '/text' | '/editor' | '/voice' | '/' | '/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/text' | '/edit'
-  id: '__root__' | '/' | '/_root_layout' | '/text' | '/edit/'
+  to: '/text' | '/editor' | '/voice' | '/' | '/edit'
+  id:
+    | '__root__'
+    | '/_root_layout'
+    | '/text'
+    | '/_root_layout/editor'
+    | '/_root_layout/voice'
+    | '/_root_layout/'
+    | '/edit/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  RootlayoutRoute: typeof RootlayoutRoute
+  RootlayoutRoute: typeof RootlayoutRouteWithChildren
   TextRoute: typeof TextRoute
   EditIndexRoute: typeof EditIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  RootlayoutRoute: RootlayoutRoute,
+  RootlayoutRoute: RootlayoutRouteWithChildren,
   TextRoute: TextRoute,
   EditIndexRoute: EditIndexRoute,
 }
@@ -133,20 +187,33 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
         "/_root_layout",
         "/text",
         "/edit/"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
-    },
     "/_root_layout": {
-      "filePath": "_root_layout.tsx"
+      "filePath": "_root_layout.tsx",
+      "children": [
+        "/_root_layout/editor",
+        "/_root_layout/voice",
+        "/_root_layout/"
+      ]
     },
     "/text": {
       "filePath": "text.tsx"
+    },
+    "/_root_layout/editor": {
+      "filePath": "_root_layout/editor.tsx",
+      "parent": "/_root_layout"
+    },
+    "/_root_layout/voice": {
+      "filePath": "_root_layout/voice.tsx",
+      "parent": "/_root_layout"
+    },
+    "/_root_layout/": {
+      "filePath": "_root_layout/index.tsx",
+      "parent": "/_root_layout"
     },
     "/edit/": {
       "filePath": "edit/index.tsx"
