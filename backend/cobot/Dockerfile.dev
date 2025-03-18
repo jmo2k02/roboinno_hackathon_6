@@ -4,7 +4,6 @@ WORKDIR /app
 
 # Copy project files
 COPY pyproject.toml uv.lock ./
-COPY cobot/ ./cobot/
 COPY README.md ./
 COPY uv.yml ./
 

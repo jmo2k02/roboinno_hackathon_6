@@ -1,8 +1,0 @@
-version: '3.8'
-services:
-  backend:
-    build: cobot
-    ports:
-      - "8000:8000"
-    volumes:
-      - "/Users/maxpraus/Desktop/Hackathon/roboinno_hackathon_6/backend/cobot/cobot:/app"

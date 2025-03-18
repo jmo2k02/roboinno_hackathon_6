@@ -57,6 +57,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-multipart" },
+    { name = "robodk" },
     { name = "uvicorn" },
 ]
 
@@ -68,6 +69,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pydantic-settings", specifier = ">=2.8.1" },
     { name = "python-multipart", specifier = ">=0.0.20" },
+    { name = "robodk", specifier = ">=5.8.0" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
 
@@ -298,6 +300,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f3/87/f44d7c9f274c7ee665a29b885ec97089ec5dc034c7f3fafa03da9e39a09e/python_multipart-0.0.20.tar.gz", hash = "sha256:8dd0cab45b8e23064ae09147625994d090fa46f5b0d1e13af944c331a7fa9d13", size = 37158 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/45/58/38b5afbc1a800eeea951b9285d3912613f2603bdf897a4ab0f4bd7f405fc/python_multipart-0.0.20-py3-none-any.whl", hash = "sha256:8a62d3a8335e06589fe01f2a3e178cdcc632f3fbe0d492ad9ee0ec35aab1f104", size = 24546 },
+]
+
+[[package]]
+name = "robodk"
+version = "5.8.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/12/c1/4b57fcbeaa9d955d89c798a3302d72564c97ddda6ff02936cf6b677775ce/robodk-5.8.0-py2.py3-none-any.whl", hash = "sha256:af5e2970e5fcef9dc133cbcf261b0664680a8460f544f7cf13259adffe5c95da", size = 118045 },
+    { url = "https://files.pythonhosted.org/packages/00/5c/d091baf2ed88f87ead6a4814a171c335e1a9e2649c4b4fcba49c5aeae069/robodk-5.8.0-py3-none-any.whl", hash = "sha256:be7fc60c9b7a6bbc1c84b0ac455599e59f391f939f0b925178547e572198cad8", size = 120251 },
 ]
 
 [[package]]

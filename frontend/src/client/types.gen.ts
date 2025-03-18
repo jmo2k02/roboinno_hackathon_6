@@ -18,6 +18,11 @@ export type HttpValidationError = {
     detail?: Array<ValidationError>;
 };
 
+export type JsonExample = {
+    text: string;
+    type: string;
+};
+
 export type SumUpResponse = {
     text: string;
 };
@@ -31,6 +36,36 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
+
+export type ReturnListApiV1HealthTestListGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Auth token
+         */
+        token: string;
+    };
+    url: '/api/v1/health/test-list';
+};
+
+export type ReturnListApiV1HealthTestListGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReturnListApiV1HealthTestListGetError = ReturnListApiV1HealthTestListGetErrors[keyof ReturnListApiV1HealthTestListGetErrors];
+
+export type ReturnListApiV1HealthTestListGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<JsonExample>;
+};
+
+export type ReturnListApiV1HealthTestListGetResponse = ReturnListApiV1HealthTestListGetResponses[keyof ReturnListApiV1HealthTestListGetResponses];
 
 export type GenerateSvgFromPromptApiV1SvgGenerateFromPromptPostData = {
     body?: never;
@@ -148,5 +183,5 @@ export type SummarizeTextApiV1GptsummarizePostResponses = {
 export type SummarizeTextApiV1GptsummarizePostResponse = SummarizeTextApiV1GptsummarizePostResponses[keyof SummarizeTextApiV1GptsummarizePostResponses];
 
 export type ClientOptions = {
-    baseURL: `${string}://${string}` | (string & {});
+    baseURL: 'http://127.0.0.1:8000' | (string & {});
 };

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from cobot.auth.deps import validate_token
 
+from cobot.api.v1.health import router as health_router
 from cobot.api.v1.svg import router as svg_router
 from cobot.api.v1.robot import router as robo_router
 from cobot.api.v1.gpt import router as gpt_router
@@ -9,6 +10,8 @@ from cobot.api.v1.gpt import router as gpt_router
 router = APIRouter(dependencies=[Depends(validate_token)])
 
 v1_router = APIRouter(prefix="/api/v1")
+
+v1_router.include_router(router=health_router, prefix="/health", tags=["health"])
 
 v1_router.include_router(router=svg_router, prefix="/svg", tags=["svg"])
 
