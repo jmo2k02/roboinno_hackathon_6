@@ -9,5 +9,14 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/cobot/cobot:/app/cobot
+  simulate:
+    build: 
+      context: ./backend/robo_sim
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./backend/robo_sim/src:/app/src
+
 
   # frontend:

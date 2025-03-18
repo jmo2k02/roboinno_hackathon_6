@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import urllib.request
 import math
 import svgpathtools as spt
@@ -21,7 +22,8 @@ def getPathFromSvg():
     #IMAGE_FILE = "https://upload.wikimedia.org/wikipedia/de/5/56/FC_Bayern_M%C3%BCnchen_Logo_%281923-1954%29.svg"
     # Bayern Logo with starts
     # IMAGE_FILE = "https://upload.wikimedia.org/wikipedia/de/c/c5/FC_Bayern_Muenchen_Wappen_5_Sterne.svg"
-    IMAGE_FILE = "svg/flower.svg"
+    IMAGE_PATH = Path(__file__).parent / "svg" / "flower.svg"
+    IMAGE_FILE = str(IMAGE_PATH)
 
     BOARD_WIDTH, BOARD_HEIGHT = 400, 400  # Size of the drawing area
     APPROACH = 25.0  # mm, approach distance for each path, 25mm is a good start
@@ -43,6 +45,7 @@ def getPathFromSvg():
             flipped_path = path.scaled(-1, 1)  
             flipped_paths.append(flipped_path)
         return flipped_paths
+    
 
     # Load the SVG file
     if IMAGE_FILE.startswith('http') and IMAGE_FILE.endswith('.svg'):
@@ -239,7 +242,7 @@ def getPathFromSvg():
             robot.MoveL(target_app)
             
 
-    output_file = "data\robot_path.csv"
+    output_file = "app/src/svg/data\robot_path.csv"
     with open(output_file, "w") as f:
         for matrix in path_numpy:
             np.savetxt(f, matrix, fmt="%.6f")

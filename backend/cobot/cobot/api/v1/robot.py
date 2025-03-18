@@ -3,8 +3,6 @@ from typing import Annotated
 from pathlib import Path
 from loguru import logger
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
-from cobot.simulate.getPathFromDrawSvg import getPathFromSvg
-from cobot.simulate.simMinimalExample import simMinimalExample
 
 import os
 
@@ -55,9 +53,6 @@ async def run_robot_using_svg(
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
-
-    getPathFromSvg()
-    simMinimalExample()
 
 @router.post("/preview_svg")
 async def preview_svg(
