@@ -13,7 +13,8 @@ dependencies = [
     "python-multipart>=0.0.20",
     "robodk>=5.8.0",
     "uvicorn>=0.34.0",
-    "svgpathtools>=1.6.1"
+    "svgpathtools>=1.6.1",
+    "robodk>=5.8.0"
 ]
 
 
