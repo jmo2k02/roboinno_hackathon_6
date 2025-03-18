@@ -5,10 +5,10 @@ from loguru import logger
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
 import os
 
-#from cobot.robot.draw_svg import draw_image
+from cobot.robot.draw_svg import draw_image
 
 router = APIRouter()
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "./cobot/robot/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/run_with_svg")
@@ -25,7 +25,7 @@ async def run_robot_using_svg(
         )
     msg = f"Got file {svg_file.filename}"
     logger.debug(msg)
-    file_dir = os.path.abspath(os.path.join(os.getcwd(), "./uploads"))
+    file_dir = os.path.abspath(os.path.join(os.getcwd(), UPLOAD_DIR))
     file_location = os.path.join(file_dir, svg_file.filename)
 
     with open(file_location, "wb") as f:
@@ -38,7 +38,7 @@ async def run_robot_using_svg(
 
         # Run the script synchronously and wait until it completes TODO: change to asynchronous when working
         #result = subprocess.run(["python3", SCRIPT_PATH, file_location], capture_output=True, text=True, check=True)
-       # draw_image(file_location) TODO: uncomment
+        draw_image(file_location)
         logger.info(f"Processing completed for {svg_file.filename}")
         return {
             "filename": svg_file.filename,
