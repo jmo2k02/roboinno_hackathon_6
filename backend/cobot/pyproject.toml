@@ -11,6 +11,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.1",
     "python-multipart>=0.0.20",
+    "robodk>=5.8.0",
     "uvicorn>=0.34.0",
     "svgpathtools>=1.6.1",
     "robodk>=5.8.0"

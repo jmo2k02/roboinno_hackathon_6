@@ -1,0 +1,13 @@
+
+services:
+
+  backend:
+    build: 
+      context: ./backend/cobot
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/cobot/cobot:/app/cobot
+
+  # frontend:
