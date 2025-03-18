@@ -6,10 +6,21 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 COPY cobot/ ./cobot/
 COPY README.md ./
+COPY uv.yml ./
+
+# Install build dependencies for compiling C++ code (like g++)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    g++ \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir .
+
+RUN uv create -f uv.yml
+RUN uv activate rtb
 
 # Expose the port FastAPI will run on
 EXPOSE 8000

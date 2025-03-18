@@ -43,6 +43,13 @@ function RootLayout ()  {
             <PencilRuler size={20} />
             {isSidebarOpen && <Link to='/editor' className="ml-3">SVG editor</Link>}
           </div>
+
+          <div 
+            className={`flex items-center px-4 py-3 ${location.pathname === '/upload' ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'} cursor-pointer`}
+          >
+            <PencilRuler size={20} />
+            {isSidebarOpen && <Link to='/upload' className="ml-3">Upload SVG</Link>}
+          </div>
           
           <div 
             className={`flex items-center px-4 py-3 ${location.pathname === '/voice' ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'} cursor-pointer`}

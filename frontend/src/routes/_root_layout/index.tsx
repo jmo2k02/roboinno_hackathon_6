@@ -1,4 +1,4 @@
-import { createFileRoute} from '@tanstack/react-router'
+import { createFileRoute, Link} from '@tanstack/react-router'
 import { ChevronRight} from 'lucide-react';
 
 export const Route = createFileRoute('/_root_layout/')({
@@ -34,13 +34,19 @@ function Index() {
                   <p className="text-gray-600 text-sm mb-4">Select a common task to get started right away</p>
                   <div className="space-y-2">
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to='/upload'>
                       Upload existing svg
-                    </div>
+                      </Link>
+                      </div>
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to="/voice">
                       Use voice recognition
-                    </div>
+                      </Link>
+                      </div>
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to='/editor'>
                       Draw svg
+                    </Link>
                     </div>
                   </div>
                 </div>
