@@ -41,9 +41,10 @@ function RouteComponent() {
 
   const handleSpeechInput = (speech: string) =>
     mutation.mutate({
+      body:{text: speech},
       query: {
         token: "ersatztoken",
-        md_text: speech
+        
       }
   })
   const {
