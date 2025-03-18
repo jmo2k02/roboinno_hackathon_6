@@ -1,0 +1,40 @@
+:host {
+    min-height: 64px;
+    width: 100%;
+    padding: 0 0 0 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+  }
+  
+  .menu {
+    display: none;
+    cursor: pointer;
+  }
+  
+  .topbar-menu {
+    background-color: black;
+    padding: 0; /* Removed padding */
+    margin: 0;  /* Removed margin */
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .text {
+    color: white;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;    /* Hide overflowing text */
+    text-overflow: ellipsis; /* Show ellipsis if text overflows */
+    flex-shrink: 1; /* Prevent text from overflowing its container */
+  }
+  
+  .logo {
+    /* You can add some styles for the logo if needed */
+  }
+  
