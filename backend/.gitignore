@@ -3,3 +3,5 @@ src/backend/cobot/.venv
 *.venv*
 *__p*
 ./frontend/node_modules
+backend/cobot/build/**
+backend/cobot/cobot.egg-info

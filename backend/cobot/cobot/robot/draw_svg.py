@@ -41,7 +41,7 @@ def flip_svg_y(paths):
     flipped_paths = []
     for path in paths:
         # Scale X by -1 to flip horizontally
-        flipped_path = path.scaled(-1, 1)
+        flipped_path = path.scaled(-1)
         flipped_paths.append(flipped_path)
     return flipped_paths
 

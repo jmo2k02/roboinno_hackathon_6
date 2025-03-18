@@ -1,0 +1,22 @@
+Metadata-Version: 2.2
+Name: cobot
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.115.11
+Requires-Dist: loguru>=0.7.3
+Requires-Dist: openai>=1.66.3
+Requires-Dist: pydantic>=2.10.6
+Requires-Dist: pydantic-settings>=2.8.1
+Requires-Dist: python-multipart>=0.0.20
+Requires-Dist: robodk>=5.8.0
+Requires-Dist: uvicorn>=0.34.0
+Requires-Dist: svgpathtools>=1.6.1
+
+# Running the backend:
+1. Install ROBODK (documented in the other readme)
+2. In the directory `backend\cobot` run `pip install .`
+3. Run `uvicorn cobot.main:app`
+
+All of this can be done in a virtual environment, be sure to configure the environment in RoboDK if that is the case
