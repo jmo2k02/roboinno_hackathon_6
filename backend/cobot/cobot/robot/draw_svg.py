@@ -22,7 +22,7 @@ robolink.import_install('svgpathtools')
 
 BOARD_WIDTH, BOARD_HEIGHT = 400, 400  # Size of the drawing area
 APPROACH = 25.0  # mm, approach distance for each path, 25mm is a good start
-MM_X_PIXEL = 5.0  # was 5.0 the smaller this value, the more detail the drawing will have but program takes longer.
+MM_X_PIXEL = 1.0  # was 5.0 the smaller this value, the more detail the drawing will have but program takes longer.
 
 # simulator settings
 BOARD_BACKGROUND_COLOR = [0, 0, 0, 1]  # Background of the drawing board (R, G, B, A)
