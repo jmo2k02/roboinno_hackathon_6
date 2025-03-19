@@ -84,8 +84,9 @@ function RootLayout ()  {
             </div>
           </div>
         </header>
-        
-        <Outlet/>
+        <main className="flex-1 overflow-auto p-4">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

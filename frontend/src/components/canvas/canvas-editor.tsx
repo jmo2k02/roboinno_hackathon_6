@@ -334,10 +334,10 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
         </div>
       </div>
 
-      <div className="relative bg-white shadow-md rounded mb-4">
+      <div className="bg-white shadow-md rounded mb-4">
         <canvas
           ref={canvasRef}
-          width={width}
+          width={600}
           height={height}
           className="border border-gray-300 rounded touch-none"
           onMouseDown={startDrawing}
