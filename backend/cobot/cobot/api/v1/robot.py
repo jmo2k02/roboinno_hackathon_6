@@ -4,6 +4,9 @@ from pathlib import Path
 from loguru import logger
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
 import os
+import requests
+import asyncio
+import io
 
 from cobot.robot.draw_svg import draw_image
 
@@ -55,7 +58,6 @@ async def run_robot_using_svg(
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
 
-
 @router.post("/run-with-image")
 async def run_robot_using_image(
     img_file: Annotated[
@@ -72,6 +74,21 @@ async def run_robot_using_image(
 
 
     logger.info("Successfully stored file.")
+
+@router.post("/get_preview", response_model=dict)
+async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")]):
+
+    url = "http://host.docker.internal:8001/get_preview"
+
+    file_bytes = await svg_file.read()
+
+    files = {
+        "svg_file": (svg_file.filename, io.BytesIO(file_bytes), "image/svg+xml")
+    }
+
+    _ = await asyncio.to_thread(requests.post, url, files=files)
+
+    return {"message": "completed"}
 
 
 
