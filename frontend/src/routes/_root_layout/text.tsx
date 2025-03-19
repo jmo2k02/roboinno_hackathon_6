@@ -1,4 +1,4 @@
-import { generateSvgFromPromptApiV1SvgGenerateFromPromptPostMutation } from '@/client/@tanstack/react-query.gen';
+import { generateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostMutation } from '@/client/@tanstack/react-query.gen';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
@@ -12,7 +12,7 @@ function RouteComponent() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const mutation = useMutation({
-        ...generateSvgFromPromptApiV1SvgGenerateFromPromptPostMutation()
+        ...generateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostMutation()
     })
     
     // Function to handle text submission
@@ -24,6 +24,12 @@ function RouteComponent() {
       try {
         
         console.log('Sending text to endpoint:', inputText);
+        mutation.mutate({
+          body:{text: inputText},
+          query: {
+            token: "ersatztoken",
+          }
+      })
         
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));

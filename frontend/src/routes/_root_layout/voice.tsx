@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query';
-import { generateSvgFromPromptApiV1SvgGenerateFromPromptPostMutation } from '@/client/@tanstack/react-query.gen';
+import { generateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostMutation } from '@/client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/button'
 import { Bell,Send, RotateCcw, SendHorizontal, Mic, Home, Menu, MessageSquare, MicVocal, PencilRuler, UserCircle, View } from 'lucide-react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
@@ -37,7 +37,7 @@ export default Dictaphone;*/
 
 function RouteComponent() {
   const mutation = useMutation({
-    ...generateSvgFromPromptApiV1SvgGenerateFromPromptPostMutation()
+    ...generateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostMutation()
   })
 
   const handleSpeechInput = (speech: string) =>
