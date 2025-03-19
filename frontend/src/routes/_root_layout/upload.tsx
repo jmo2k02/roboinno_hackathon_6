@@ -1,8 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Upload, X } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { getPreviewApiV1RobotGetPreviewPostMutation} from '@/client/@tanstack/react-query.gen';
+import { Simulator } from '@/components/simulator/simulator';
 
 export const Route = createFileRoute('/_root_layout/upload')({
   component: RouteComponent,
@@ -12,7 +13,6 @@ function RouteComponent() {
     const [svgFile, setSvgFile] = useState<File | null>();
     const [svgPreview, setSvgPreview] = useState<string | null>(null);
     const [shouldReloadIframe, setShouldReloadIframe] = useState(false);
-    const iframeRef = useRef<HTMLIFrameElement>(null);
     
     const mutation = useMutation({
         ...getPreviewApiV1RobotGetPreviewPostMutation()
@@ -43,22 +43,6 @@ function RouteComponent() {
         setShouldReloadIframe(true);
       }
     };
-  
-    // Effect to handle iframe reload
-    useEffect(() => {
-      if (shouldReloadIframe) {
-        const timer = setTimeout(() => {
-          if (iframeRef.current) {
-            const currentSrc = iframeRef.current.src;
-            iframeRef.current.src = currentSrc;
-            console.log("Iframe reloaded");
-          }
-          setShouldReloadIframe(false);
-        }, 2000);
-        
-        return () => clearTimeout(timer);
-      }
-    }, [shouldReloadIframe]);
   
     const clearSvgPreview = () => {
       setSvgFile(null);
@@ -113,25 +97,11 @@ function RouteComponent() {
               </div>
             </div>
   
-            {/* Video Player Card */}
-            <div className="flex-1 bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6 flex flex-col h-full">
-                <h2 className="text-lg font-medium mb-4">Robot simulation</h2>
-                <div className="flex-1 flex flex-col bg-black rounded-lg overflow-hidden">
-                  <div className="flex-1 relative">
-                    <iframe
-                      ref={iframeRef}
-                      src="http://localhost:52000/?53000"
-                      title="Video Player"
-                      className="absolute inset-0 w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Use the new Simulator component */}
+            <Simulator 
+              shouldReloadIframe={shouldReloadIframe}
+              setShouldReloadIframe={setShouldReloadIframe}
+            />
           </div>
         </main>
       </div>

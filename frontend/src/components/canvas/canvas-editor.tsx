@@ -211,18 +211,6 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
     setCurrentStep(newHistory.length - 1);
   };
 
-  // Export-Funktionen
-  const exportAsPNG = (): void => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const dataURL = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'canvas-drawing.png';
-    link.click();
-  };
-
   const exportAsSVG = (): void => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -349,16 +337,10 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
 
       <div className="flex gap-4">
         <button 
-          onClick={exportAsPNG} 
-          className="p-2 bg-green-500 text-white rounded"
-        >
-          Als PNG exportieren
-        </button>
-        <button 
           onClick={exportAsSVG} 
           className="p-2 bg-blue-500 text-white rounded"
         >
-          Als SVG exportieren
+          Let the robot draw
         </button>
       </div>
 
