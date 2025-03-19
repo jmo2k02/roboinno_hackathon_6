@@ -26,7 +26,7 @@ function RouteComponent() {
             console.log("Iframe reloaded");
           }
           setShouldReloadIframe(false);
-        }, 20000);
+        }, 13000);
         
         return () => clearTimeout(timer);
       }

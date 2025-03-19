@@ -120,11 +120,12 @@ def runPreview():
     # Linear compenent of objective function for qp
     c = np.zeros(7)
 
-    resolution = 10
+    ## Temporary commented out
+    # resolution = 10
 
-    spheres = [sg.Sphere(0.003, color = "black") for _ in range(int(len(xyz_mstrarj_rotated)/resolution))]
-    for _,sphere in enumerate(spheres):
-        backend.add(sphere)
+    # spheres = [sg.Sphere(0.003, color = "black") for _ in range(int(len(xyz_mstrarj_rotated)/resolution))]
+    # for _,sphere in enumerate(spheres):
+    #     backend.add(sphere)
 
     # This loop drives the robot to the start of the welding task
     arrived = False
@@ -182,11 +183,17 @@ def runPreview():
 
         T_ee = panda.fkine(panda.q)
 
-        if idx % resolution == 0:
+        # if idx % resolution == 0:
 
-            if T_ee.A[3,2] > 0.599:
-                spheres[i_sphere].T = T_ee.A
-                i_sphere += 1
+        #     if T_ee.A[3,2] > 0.599:
+        #         spheres[i_sphere].T = T_ee.A
+        #         i_sphere += 1
+
+        if idx % 30 == 0:
+            point_axes = sg.Axes(0.005)
+            point = sg.Sphere(0.005, color = "yellow")
+            point.T = T_ee.A
+            backend.add(point)
 
 
         # Printer
