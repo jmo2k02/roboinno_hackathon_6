@@ -34,7 +34,7 @@ export const returnListApiV1HealthTestListGet = <ThrowOnError extends boolean = 
  */
 export const generateSvgFromPromptApiV1SvgGenerateFromPromptPost = <ThrowOnError extends boolean = false>(options: Options<GenerateSvgFromPromptApiV1SvgGenerateFromPromptPostData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<unknown, GenerateSvgFromPromptApiV1SvgGenerateFromPromptPostError, ThrowOnError>({
-        url: '/api/v1/svg/generate_from_prompt',
+        url: '/api/v1/svg/generate_svg_from_prompt',
         ...options
     });
 };
