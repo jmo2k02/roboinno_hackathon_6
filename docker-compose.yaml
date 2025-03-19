@@ -10,6 +10,7 @@ services:
     volumes:
       - ./backend/cobot/cobot:/app/cobot
 
+
   frontend:
     build:
       context: ./frontend
