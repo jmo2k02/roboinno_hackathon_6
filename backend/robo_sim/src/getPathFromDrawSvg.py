@@ -4,13 +4,14 @@ import urllib.request
 import math
 import svgpathtools as spt
 import numpy as np
+import matplotlib.pyplot as plt
 from robodk import robolink, robomath, robodialogs
 robolink.import_install('svgpathtools')
 
-# The user of this program is responsible for calibrating the robot to the drawing surface defined by "RW_WhtBrd" in RoboDK
-# Follow these instructions to calibrate the robot to the drawing surface: TODO
+def getPathFromSVG(path: str, displayPathPLT = False):
 
-def getPathFromSvg():
+    # The user of this program is responsible for calibrating the robot to the drawing surface defined by "RW_WhtBrd" in RoboDK
+    # Follow these instructions to calibrate the robot to the drawing surface: TODO
 
     path_numpy = []
     #-------------------------------------------
@@ -22,8 +23,7 @@ def getPathFromSvg():
     #IMAGE_FILE = "https://upload.wikimedia.org/wikipedia/de/5/56/FC_Bayern_M%C3%BCnchen_Logo_%281923-1954%29.svg"
     # Bayern Logo with starts
     # IMAGE_FILE = "https://upload.wikimedia.org/wikipedia/de/c/c5/FC_Bayern_Muenchen_Wappen_5_Sterne.svg"
-    IMAGE_PATH = Path(__file__).parent / "svg" / "flower.svg"
-    IMAGE_FILE = str(IMAGE_PATH)
+    IMAGE_FILE = path
 
     BOARD_WIDTH, BOARD_HEIGHT = 400, 400  # Size of the drawing area
     APPROACH = 25.0  # mm, approach distance for each path, 25mm is a good start
@@ -45,7 +45,6 @@ def getPathFromSvg():
             flipped_path = path.scaled(-1, 1)  
             flipped_paths.append(flipped_path)
         return flipped_paths
-    
 
     # Load the SVG file
     if IMAGE_FILE.startswith('http') and IMAGE_FILE.endswith('.svg'):
@@ -78,72 +77,6 @@ def getPathFromSvg():
     #TRANSLATE = complex((BOARD_WIDTH - svg_width) / 2 - svg_width_min, (BOARD_HEIGHT - svg_height) / 2 - svg_height_min)
     TRANSLATE = complex(-svg_width / 2 - svg_width_min, -svg_height / 2 - svg_height_min)
 
-    #--------------------------------------------
-    # Get RoboDK Items
-    RDK = robolink.Robolink()
-    RDK.setSelection([])
-
-    robot = RDK.ItemUserPick(itemtype_or_list=robolink.ITEM_TYPE_ROBOT)
-    tool = robot.getLink(robolink.ITEM_TYPE_TOOL)
-    if not robot.Valid() or not tool.Valid():
-        print("No valid robot or tool selected. Exiting.")
-        quit()
-
-    # frames = RDK.ItemList(robolink.ITEM_TYPE_FRAME)
-    # frames.remove(robot.Parent())
-    # frame = RDK.ItemUserPick(itemtype_or_list=frames)  # Reference frame for the drawing
-    frame = RDK.Item('RW_WhtBrd')
-    if not frame.Valid():
-        print("No valid frame selected. Exiting.")
-        quit()
-
-    #-------------------------------------------
-    # Setup Drawing Board
-    #RDK.Render(False)
-    board_draw = RDK.Item('Drawing Board')  # Drawing board
-    if board_draw.Valid() and board_draw.Type() == robolink.ITEM_TYPE_OBJECT:
-        board_draw.Delete()
-    if not board_draw.Valid():
-        # Check for a predefined whiteboard template in the RoboDK station
-        template_board = RDK.Item('Whiteboard 250mm', itemtype=robolink.ITEM_TYPE_OBJECT)
-        if not template_board.Valid():
-            print("Error: No valid whiteboard template found in the station.")
-            quit()
-        # Copy the template board to the clipboard
-        template_board.Copy()
-        board_draw = frame.Paste()
-        if not board_draw.Valid():
-            print("Error: Failed to paste the Drawing Board.")
-            quit()
-    # Configure the board
-    board_draw.setVisible(True, False)
-    board_draw.setName('Drawing Board')
-    board_draw.Scale([BOARD_HEIGHT / 250, BOARD_WIDTH / 250, 1])  # adjust the board size to the image size (scale)
-    board_draw.setColor(BOARD_BACKGROUND_COLOR)
-    # Apply transformations
-    board_pose = board_draw.Pose()
-    board_pose = board_pose * robomath.rotx(math.pi)
-    board_pose = board_pose * robomath.transl(-BOARD_HEIGHT / 2, -BOARD_WIDTH / 2, 0)  # Shift by -width/2 and -height/2
-    board_draw.setPose(board_pose)
-
-    #-------------------------------------------
-    # Reference pixel object for "drawing"
-    pixel_ref = RDK.Item('pixel')  # Reference object to paint
-    if not pixel_ref.Valid():
-        print("No pixel reference found. Exiting.")
-        quit()
-    #RDK.Render(False)
-
-    #-------------------------------------------
-    # Initialize the robot
-    robot.setPoseFrame(frame)
-    robot.setPoseTool(tool)
-    # Move to home position
-    start_pos = RDK.Item('start_pos')
-    robot.MoveJ(start_pos)
-
-    #-------------------------------------------
-    RDK.ShowMessage(f"Drawing {IMAGE_FILE}..", False)
 
     for path_count, (path, attrib) in enumerate(zip(paths, path_attribs)):
         styles = {}
@@ -181,11 +114,6 @@ def getPathFromSvg():
         draw_color = spt.misctools.hex2rgb(hex_color)
         draw_color = [round(x / 255, 4) for x in draw_color]
 
-        if 'id' in attrib:
-            RDK.ShowMessage(f"Drawing {attrib['id']} with color {hex_color}", False)
-        else:
-            RDK.ShowMessage(f"Drawing path {path_count} with color {hex_color}", False)
-
         approach_done = False
         prev_point = None
         for segment in path.scaled(SCALE).translated(TRANSLATE):
@@ -217,7 +145,6 @@ def getPathFromSvg():
                     target0 = robomath.transl(px, py, 0) * robomath.rotz(pa)
                     target0_app = target0 * robomath.transl(0, 0, -APPROACH)
                     path_numpy.append(target0_app.toNumpy())
-                    robot.MoveJ(target0_app)
                     approach_done = True
                     continue
 
@@ -226,27 +153,25 @@ def getPathFromSvg():
 
                 path_numpy.append(robot_pose.toNumpy())
 
-                # add pixel logic only for the actual drawing (exclude the approach point)
-                if approach_done:
-                    tool_pose = robot.Pose()  # Get the tool's current pose in the robot's frame
-                    tool_pose_relative_to_board = robomath.invH(board_pose) * tool_pose  # Transform to board coordinates
-                    pixel_ref.Recolor(draw_color)
-                    board_draw.AddGeometry(pixel_ref, tool_pose_relative_to_board)
-
                 prev_point = point
 
         # Safe retract from the last target
         if approach_done:
             target_app = robot_pose * robomath.transl(0, 0, -APPROACH)
             path_numpy.append(target_app.toNumpy())
-            robot.MoveL(target_app)
-            
 
-    output_file = "app/src/svg/data\robot_path.csv"
+
+
+    output_file = Path(__file__).parent / "data" / "robot_path_.csv"
     with open(output_file, "w") as f:
         for matrix in path_numpy:
             np.savetxt(f, matrix, fmt="%.6f")
             f.write("\n")
 
-    robot.MoveJ(start_pos)
-    RDK.ShowMessage(f"Done drawing {IMAGE_FILE}!", False)
+    # Display path traced by robot
+    if displayPathPLT == True:
+        path = np.array(path_numpy)
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection="3d")
+        plt.plot(path[:,0,3], path[:,1,3], path[:,2,3])
+        plt.show()

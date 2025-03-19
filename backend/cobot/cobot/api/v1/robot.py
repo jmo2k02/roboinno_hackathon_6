@@ -3,8 +3,8 @@ from typing import Annotated
 from pathlib import Path
 from loguru import logger
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
-
 import os
+import requests
 
 from cobot.robot.draw_svg import draw_image
 
@@ -56,22 +56,6 @@ async def run_robot_using_svg(
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
 
-@router.post("/preview_svg")
-async def preview_svg(
-    svg_file: Annotated[
-        UploadFile, File(description="SVG file that is used to run the model")
-    ],
-):
-    mime_type = svg_file.content_type
-    if not mime_type == "image/svg+xml":
-        msg = f"Wrong mime type provided '{mime_type}' this endpoint only accepts image/svg+xml"
-        raise HTTPException(
-            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=msg
-        )
-    msg = f"Got file {svg_file.filename}"
-    logger.debug(msg)
-
-
 @router.post("/run-with-image")
 async def run_robot_using_image(
     img_file: Annotated[
@@ -88,6 +72,14 @@ async def run_robot_using_image(
 
 
     logger.info("Successfully stored file.")
+
+@router.post("/get_preview", response_model=dict)
+async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")]):
+
+    url = "http://127.0.0.1:8001/get_preview"  # Adjust if your FastAPI server runs on a different host/port
+    response = requests.post(url, files= await svg_file.read())
+
+    return response.json()
 
 
 
