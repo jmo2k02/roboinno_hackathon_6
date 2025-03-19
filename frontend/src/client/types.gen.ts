@@ -77,7 +77,7 @@ export type GenerateSvgFromPromptApiV1SvgGenerateFromPromptPostData = {
          */
         token: string;
     };
-    url: '/api/v1/svg/generate_from_prompt';
+    url: '/api/v1/svg/generate_svg_from_prompt';
 };
 
 export type GenerateSvgFromPromptApiV1SvgGenerateFromPromptPostErrors = {
