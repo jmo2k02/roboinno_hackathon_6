@@ -3,6 +3,7 @@ import uvicorn
 import asyncio
 from fastapi import FastAPI, UploadFile, File
 import os
+from swift import Swift
 
 from getPreview import getPreview
 
@@ -25,12 +26,14 @@ async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file
         f.write(await svg_file.read())
 
     # Call the preview function (assuming it takes the file path)
-    asyncio.to_thread(getPreview(file_path))
+    await asyncio.to_thread(getPreview, file_path)
 
     return {"message": "File uploaded successfully", "file_path": file_path}
 
 
 if __name__ == "__main__":
+    # Use swift for visualistion 
+
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
