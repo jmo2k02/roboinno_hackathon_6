@@ -90,8 +90,8 @@ def runPreview():
             #displayTrj(backend,se3_path_rotated,diff = 25)
 
     # Visualize whiteboard
-    whiteboard = sg.Cuboid(scale=[1,0.01,0.5],color = "white")
-    blackboard = sg.Cuboid(scale=[1.02,0.01,0.52],color = "black")
+    whiteboard = sg.Cuboid(scale=[0.5,0.01,0.8],color = "white")
+    blackboard = sg.Cuboid(scale=[0.52,0.01,0.82],color = "black")
     whiteboard.T = sm.SE3.Trans(0.62,0,0.7) * sm.SE3.Rz(np.pi/2) 
     blackboard.T = sm.SE3.Trans(0.621,0,0.7) * sm.SE3.Rz(np.pi/2) 
     backend.add(whiteboard)
@@ -119,6 +119,13 @@ def runPreview():
 
     # Linear compenent of objective function for qp
     c = np.zeros(7)
+
+    ## Temporary commented out
+    # resolution = 10
+
+    # spheres = [sg.Sphere(0.003, color = "black") for _ in range(int(len(xyz_mstrarj_rotated)/resolution))]
+    # for _,sphere in enumerate(spheres):
+    #     backend.add(sphere)
 
     # This loop drives the robot to the start of the welding task
     arrived = False
@@ -159,6 +166,8 @@ def runPreview():
 
     backend.add(set_tool_orientation)
 
+    i_sphere = 0
+
     approx_integral = np.zeros(6)
     idx = 0
     int_pos = 0
@@ -174,11 +183,18 @@ def runPreview():
 
         T_ee = panda.fkine(panda.q)
 
+        # if idx % resolution == 0:
+
+        #     if T_ee.A[3,2] > 0.599:
+        #         spheres[i_sphere].T = T_ee.A
+        #         i_sphere += 1
+
         if idx % 30 == 0:
             point_axes = sg.Axes(0.005)
             point = sg.Sphere(0.005, color = "yellow")
             point.T = T_ee.A
             backend.add(point)
+
 
         # Printer
         ev, approx_integral = PI_controller(T_ee.A,T_ee_d.A,T_ee_d_next.A,approx_integral,dt = dt, Kp = 5,Ki = 3)
