@@ -7,11 +7,13 @@ import spatialgeometry as sg
 from swift import Swift
 import qpsolvers as qp
 import matplotlib.pyplot as plt
-from pathlib import Path
+from pathlib import Path#
+import time
 
 from utils import displayTrj, load_se3_path, interpolate_waypoints, cal_T
 from controller import PI_controller
 
+backend = Swift()
 
 def runPreview():
     displayPathPLT = False
@@ -21,10 +23,8 @@ def runPreview():
 
     draw = "svg" #implemented -> [svg,T]
 
-    # Use swift for visualistion 
-    backend = Swift()
-
     backend.launch(realtime=True, browser="google-chrome")
+
     t = 0
     dt = 0.005
 
@@ -90,8 +90,8 @@ def runPreview():
             #displayTrj(backend,se3_path_rotated,diff = 25)
 
     # Visualize whiteboard
-    whiteboard = sg.Cuboid(scale=[1,0.01,0.5],color = "white")
-    blackboard = sg.Cuboid(scale=[1.02,0.01,0.52],color = "black")
+    whiteboard = sg.Cuboid(scale=[0.5,0.01,0.8],color = "white")
+    blackboard = sg.Cuboid(scale=[0.52,0.01,0.82],color = "black")
     whiteboard.T = sm.SE3.Trans(0.62,0,0.7) * sm.SE3.Rz(np.pi/2) 
     blackboard.T = sm.SE3.Trans(0.621,0,0.7) * sm.SE3.Rz(np.pi/2) 
     backend.add(whiteboard)
@@ -119,6 +119,13 @@ def runPreview():
 
     # Linear compenent of objective function for qp
     c = np.zeros(7)
+
+    ## Temporary commented out
+    # resolution = 10
+
+    # spheres = [sg.Sphere(0.003, color = "black") for _ in range(int(len(xyz_mstrarj_rotated)/resolution))]
+    # for _,sphere in enumerate(spheres):
+    #     backend.add(sphere)
 
     # This loop drives the robot to the start of the welding task
     arrived = False
@@ -159,6 +166,8 @@ def runPreview():
 
     backend.add(set_tool_orientation)
 
+    i_sphere = 0
+
     approx_integral = np.zeros(6)
     idx = 0
     int_pos = 0
@@ -174,11 +183,18 @@ def runPreview():
 
         T_ee = panda.fkine(panda.q)
 
+        # if idx % resolution == 0:
+
+        #     if T_ee.A[3,2] > 0.599:
+        #         spheres[i_sphere].T = T_ee.A
+        #         i_sphere += 1
+
         if idx % 30 == 0:
             point_axes = sg.Axes(0.005)
             point = sg.Sphere(0.005, color = "yellow")
             point.T = T_ee.A
             backend.add(point)
+
 
         # Printer
         ev, approx_integral = PI_controller(T_ee.A,T_ee_d.A,T_ee_d_next.A,approx_integral,dt = dt, Kp = 5,Ki = 3)
@@ -233,3 +249,43 @@ def runPreview():
 
         # step visualisation
         backend.step(dt)
+    
+    # puma0 = rtb.models.Puma560()
+    # pumas = []
+    # num_robots = 20
+    # rotation = 2 * np.pi * ((num_robots - 1) / num_robots)
+
+
+    # for theta in np.linspace(0, rotation, num_robots):
+    #     base = sm.SE3.Rz(theta) * sm.SE3(2.8, 0, 0)
+
+    #     # Clone the robot
+    #     puma = rtb.ERobot(puma0)
+    #     puma.base = base
+    #     puma.q = puma0.qz
+    #     backend.add(puma)
+    #     pumas.append(puma)
+
+    # # The wave is a Gaussian that moves around the circle
+    # tt = np.linspace(0, num_robots, num_robots * 10)
+
+
+    # def gaussian(x, mu, sig):
+    #     return np.exp(-np.power(x - mu, 2.0) / (2 * np.power(sig, 2.0)))
+
+
+    # g = gaussian(tt, 5, 1)
+    # t = 0
+
+    # while True:
+    #     for i, puma in enumerate(pumas):
+    #         k = (t + i * 10) % len(tt)
+    #         puma.q = np.r_[0, g[k], -g[k], 0, 0, 0]
+
+    #         backend.step(0)
+    #         time.sleep(0.0001)
+
+    #     t += 1
+    print("Backend close")
+    backend.close()
+    backend._init()
