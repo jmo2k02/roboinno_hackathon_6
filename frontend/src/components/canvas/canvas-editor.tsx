@@ -1,4 +1,6 @@
+import { getPreviewApiV1RobotGetPreviewPostMutation } from '@/client/@tanstack/react-query.gen';
 import useEditorStore from '@/stores/editor-store';
+import { useMutation } from '@tanstack/react-query';
 import React, { useState, useRef, useEffect, MouseEvent } from 'react';
 
 // Define interfaces
@@ -22,11 +24,13 @@ type ToolType = 'pencil' | 'line' | 'rectangle' | 'circle';
 interface CanvasEditorProps {
     width?: number;
     height?: number;
+    setShouldReloadIframe: (value: boolean) => void;
 }
 
 const CanvasEditor: React.FC<CanvasEditorProps> = ({
     width = 800,
-    height = 400
+    height = 400,
+    setShouldReloadIframe
 }) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const svgRef = useRef<SVGSVGElement | null>(null);
@@ -44,6 +48,10 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
     const [currentPath, setCurrentPath] = useState<Path | null>(null);
 
     const editorStore = useEditorStore()
+
+    const mutation = useMutation({
+        ...getPreviewApiV1RobotGetPreviewPostMutation()
+    })
 
     // Initialisierung des Canvas
     useEffect(() => {
@@ -330,7 +338,7 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
         link.click();
     };
 
-    const exportAsSVG = (): void => {
+    const buildSvgBlob = (): Blob => {
         const svg = svgRef.current;
         if (!svg) return;
 
@@ -384,6 +392,11 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
         // Create SVG string and download
         const svgData = new XMLSerializer().serializeToString(svg);
         const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        // const svgUrl = URL.createObjectURL(svgBlob);
+        return svgBlob
+    }
+    const exportAsSVG = (): void => {
+        const svgBlob = buildSvgBlob()
         const svgUrl = URL.createObjectURL(svgBlob);
         const link = document.createElement('a');
         link.href = svgUrl;
@@ -391,6 +404,24 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
         link.click();
         URL.revokeObjectURL(svgUrl);
     };
+    const uploadSvgBlob = (): void => {
+        const svgBlob = buildSvgBlob()
+        console.log(svgBlob.type)
+        mutation.mutate({
+            body: {
+                svg_file: svgBlob
+            },
+            query: {
+                token: "test"
+            }
+        })
+    }
+
+    const handleStartSimulation = (): void => {
+        editorStore.invertCreatedSvg()
+        uploadSvgBlob()
+        setShouldReloadIframe(true);
+    }
 
     return (
         <div className="flex flex-col p-4 bg-gray-100 w-full">
@@ -482,7 +513,7 @@ const CanvasEditor: React.FC<CanvasEditorProps> = ({
                     Als SVG exportieren
                 </button>
                 <button
-                    onClick={editorStore.invertCreatedSvg}
+                    onClick={handleStartSimulation}
                     className="p-2 bg-blue-500 text-white rounded"
                 >
                     Show in Simulation
