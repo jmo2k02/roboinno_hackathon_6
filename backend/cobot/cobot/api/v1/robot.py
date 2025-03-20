@@ -78,9 +78,12 @@ async def run_robot_using_image(
 @router.post("/get_preview", response_model=dict)
 async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")]):
 
-    url = "http://host.docker.internal:8001/get_preview"
+    url = "http://172.17.0.1:8001/get_preview"
 
     file_bytes = await svg_file.read()
+
+    msg = f"Got file {svg_file.filename} and uploading to {url}"
+    logger.info(msg)
 
     files = {
         "svg_file": (svg_file.filename, io.BytesIO(file_bytes), "image/svg+xml")

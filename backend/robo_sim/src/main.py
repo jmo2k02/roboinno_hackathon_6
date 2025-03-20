@@ -5,7 +5,7 @@ from fastapi import FastAPI, UploadFile, File
 import os
 from swift import Swift
 
-from getPreview import getPreview
+from getPreview import getPreview, getPreviewIn2DPlain
 
 app = FastAPI(
     docs_url="/api/docs"
@@ -25,8 +25,12 @@ async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file
     with open(file_path, "wb") as f:
         f.write(await svg_file.read())
 
+    msg = f"Using file at {file_path}"
+    print(msg)
+
     # Call the preview function (assuming it takes the file path)
-    await asyncio.to_thread(getPreview, file_path)
+    # await asyncio.to_thread(getPreview, file_path)
+    await asyncio.to_thread(getPreviewIn2DPlain, file_path, 'panda')
 
     return {"message": "File uploaded successfully", "file_path": file_path}
 
