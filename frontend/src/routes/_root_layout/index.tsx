@@ -1,5 +1,4 @@
-import { createFileRoute} from '@tanstack/react-router'
-import { ChevronRight} from 'lucide-react';
+import { createFileRoute, Link} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_root_layout/')({
   component: Index,
@@ -18,14 +17,14 @@ function Index() {
           {(
             <div className="space-y-6">
               <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-medium mb-4">Welcome to RoboControl</h2>
+                <h2 className="text-lg font-medium mb-4">Welcome to Our Drawing Robot Arm Dashboard!</h2>
                 <p className="text-gray-600 mb-4">
-                  Your robot is ready to receive commands. Use the simple controls below to get started.
+                Our goal is to simplify the process of controlling your robot arm for drawing tasks. You no longer need any technical knowledge or expertise in robotics to convert your ideas into actions. With our platform, you can easily upload SVG files, and we'll automatically translate them into commands for the robot arm to execute.
+
+You can also create and generate SVG drawings using text or speech input, making the process even more accessible. Want to modify the drawing? No problem! You can edit the generated SVGs directly within the platform, ensuring you have full control over your designs.
+
+Enjoy a seamless experience from concept to creation, without worrying about the technicalities!
                 </p>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
-                  Start Robot
-                  <ChevronRight size={16} className="ml-1" />
-                </button>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -34,13 +33,24 @@ function Index() {
                   <p className="text-gray-600 text-sm mb-4">Select a common task to get started right away</p>
                   <div className="space-y-2">
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to='/upload'>
                       Upload existing svg
-                    </div>
+                      </Link>
+                      </div>
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to="/voice">
                       Use voice recognition
+                      </Link>
+                      </div>
+                    <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to='/editor'>
+                      Draw svg
+                    </Link>
                     </div>
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
-                      Draw svg
+                    <Link to='/editor'>
+                      Generate from text
+                    </Link>
                     </div>
                   </div>
                 </div>

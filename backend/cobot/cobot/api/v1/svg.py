@@ -1,7 +1,9 @@
 import logging
 import os
 from typing import Annotated
-
+import requests
+import io
+import asyncio
 from fastapi import APIRouter, HTTPException, UploadFile, Body, Request, FastAPI, File
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
@@ -27,10 +29,32 @@ async def generate_svg_from_prompt(text: str = Body(..., embed=True)):
     """API endpoint to generate SVG from a text prompt."""
     try:
         svg = get_svg_from_prompt(text)
-        return svg
+        print(svg)
+        
+        response = requests.get(svg[0])
+        if response.status_code == 200:
+            # Save the SVG content
+            with open("image.svg", "wb") as file:
+                file.write(response.content)
+            
+            # Reopen the file to read its contents
+            with open("image.svg", "rb") as file:
+                file_bytes = file.read()
+            
+            url = "http://host.docker.internal:8001/get_preview"
+            files = {
+                "svg_file": ("image.svg", io.BytesIO(file_bytes), "image/svg+xml")
+            }
+            
+            _ = await asyncio.to_thread(requests.post, url, files=files)
+            return {"message": "completed"}
+        else:
+            logger.error("Error downloading SVG")
+            raise HTTPException(status_code=500, detail=f"Failed to download SVG: {response.status_code}")
+        
     except Exception as e:
         logger.error(f"Error generating SVG: {e}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/convert_to_svg")
