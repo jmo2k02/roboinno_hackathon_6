@@ -1,2 +1,3 @@
 build/**
 cobot.egg-info
+.env
