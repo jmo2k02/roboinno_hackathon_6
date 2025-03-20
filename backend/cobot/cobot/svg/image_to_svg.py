@@ -37,7 +37,7 @@ def generate_from_image(image_path):
     # Draw contours in the SVG file with thicker stroke
     for contour in contours:
         path_data = 'M ' + ' '.join([f'{point[0][0]},{point[0][1]}' for point in contour])
-        dwg.add(dwg.path(d=path_data, fill='none', stroke='black', stroke_width=3))  # Thicker contours
+        dwg.add(dwg.path(d=path_data, fill='none', stroke='black', stroke_width=5))  # Thicker contours
 
     # Save the SVG file
     dwg.save()
