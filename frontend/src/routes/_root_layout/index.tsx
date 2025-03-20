@@ -48,7 +48,7 @@ Enjoy a seamless experience from concept to creation, without worrying about the
                     </Link>
                     </div>
                     <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
-                    <Link to='/editor'>
+                    <Link to='/text'>
                       Generate from text
                     </Link>
                     </div>
