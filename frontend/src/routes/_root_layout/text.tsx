@@ -1,4 +1,5 @@
 import { generateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostMutation } from '@/client/@tanstack/react-query.gen';
+import { Simulator } from '@/components/simulator/simulator';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react';
@@ -12,6 +13,8 @@ function RouteComponent() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [shouldReloadIframe, setShouldReloadIframe] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [model, setModel] = useState("frankie");
+    const [teachme, setTeachme] = useState(false);
 
     const mutation = useMutation({
         ...generateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostMutation()
@@ -44,6 +47,9 @@ function RouteComponent() {
           body:{text: inputText},
           query: {
             token: "ersatztoken",
+            model: model,
+            teachme: teachme,
+
           }
         })
         
@@ -64,6 +70,29 @@ function RouteComponent() {
             <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:w-1/3">
               <div className="p-6 flex flex-col">
                 <h2 className="text-lg font-medium mb-4">Let the robot know what to draw</h2>
+                <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Select Model:</label>
+                <select
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="frankie">Frankie</option>
+                  <option value="panda560">Panda</option>
+                  <option value="ur10">UR10</option>
+                </select>
+              </div>
+              
+              <div className="mb-4 flex items-center">
+                <input
+                  type="checkbox"
+                  id="teachme"
+                  checked={teachme}
+                  onChange={(e) => setTeachme(e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="teachme" className="text-sm text-gray-700">Enable TeachMe</label>
+              </div>
                 
                 <div className="flex flex-col gap-4">
                   {/* Text Area */}
@@ -99,24 +128,12 @@ function RouteComponent() {
             </div>
 
             {/* Robot Simulation Card */}
-            <div className="flex-1 bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6 flex flex-col h-full">
-                <h2 className="text-lg font-medium mb-4">Robot simulation</h2>
-                <div className="flex-1 flex flex-col bg-black rounded-lg overflow-hidden">
-                  <div className="flex-1 relative">
-                    <iframe
-                      ref={iframeRef}
-                      src="http://localhost:52000/?53000"
-                      title="Video Player"
-                      className="absolute inset-0 w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Use the new Simulator component */}
+                        <Simulator 
+                          shouldReloadIframe={shouldReloadIframe}
+                          setShouldReloadIframe={setShouldReloadIframe}
+                          reloadTime={13000}
+                        />
           </div>
         </main>
       </div>

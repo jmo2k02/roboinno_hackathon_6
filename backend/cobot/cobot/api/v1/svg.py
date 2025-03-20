@@ -25,7 +25,7 @@ app.mount("/static", StaticFiles(directory=UPLOAD_DIR), name="static")
 
 
 @router.post("/generate_svg_from_prompt")
-async def generate_svg_from_prompt(text: str = Body(..., embed=True)):
+async def generate_svg_from_prompt(model: str, teachme: bool, text: str = Body(..., embed=True)):
     """API endpoint to generate SVG from a text prompt."""
     try:
         svg = get_svg_from_prompt(text)
@@ -45,8 +45,13 @@ async def generate_svg_from_prompt(text: str = Body(..., embed=True)):
             files = {
                 "svg_file": ("image.svg", io.BytesIO(file_bytes), "image/svg+xml")
             }
+
+            params = {
+                "model": model,
+                "teachme": teachme,
+            }
             
-            _ = await asyncio.to_thread(requests.post, url, files=files)
+            _ = await asyncio.to_thread(requests.post, url, files=files, params=params)
             return {"message": "completed"}
         else:
             logger.error("Error downloading SVG")

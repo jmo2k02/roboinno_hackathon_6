@@ -1,6 +1,9 @@
 import spatialgeometry as sg
 import numpy as np
 from scipy.interpolate import interp1d
+import roboticstoolbox as rtb
+from typing import Any
+import spatialmath as sm
 
 def displayTrj(backend,traj,diff = 1):
 
@@ -99,8 +102,53 @@ def cal_T(z = np.array([0,0,1]), p= np.zeros(3), offset=np.zeros(3)):
 
     return T
 
-def decay(theta,bc_cone):
-    if theta > bc_cone:
+def decay2(theta,bc_cone):
+    if np.degrees(theta) > bc_cone:
         return 0
     else:
-        return np.exp(-10*(theta - bc_cone +0.62))
+        return np.exp(-20*(theta - bc_cone +0.32))
+    
+def angle_between(vec1,vec2):
+    return np.arccos(np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+
+
+def manipulability(J, axes):
+    """
+    Calculates the manipulability of the robot at joint configuration q
+
+    :robot: A Robot object to find the manipulability of
+    :q: The joint coordinates of the robot (ndarray)
+    :axes: A boolean list which correspond with the Cartesian axes to
+        find the manipulability of (6 boolean values in a list)
+    """
+
+    # only keep the selected axes of J
+    J = J[axes, :]
+
+    # calculate the manipulability
+    m = np.sqrt(np.linalg.det(J @ J.T))
+
+    return m
+
+def choose_robot(robot_name: str) -> Any:
+    robots = {
+        "panda560": rtb.models.Panda(),
+        "ur10": rtb.models.UR10(),
+        "frankie": rtb.models.Frankie()
+    }
+    try:
+        return robots[robot_name]
+    except KeyError:
+        raise ValueError(f"Robot '{robot_name}' is not available. "
+                         f"Choose from {', '.join(robots.keys())}.")
+    
+def perform_task_based_on_robot(robot: Any):
+    if isinstance(robot, rtb.models.Panda):
+        robot.q = robot.qr
+    elif isinstance(robot, rtb.models.UR10):
+        robot.q = np.array([0, np.radians(-120), np.radians(90), np.radians(20), np.radians(90), 0])
+    elif isinstance(robot, rtb.models.Frankie):
+        robot.q = robot.qr
+        robot.base = sm.SE3(-1.5,0,0)
+    else:
+        raise TypeError("Unknown robot type.")

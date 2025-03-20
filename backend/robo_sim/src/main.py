@@ -4,7 +4,7 @@ import asyncio
 from fastapi import FastAPI, UploadFile, File
 import os
 from swift import Swift
-
+from teachmain import teach
 from getPreview import getPreview
 
 app = FastAPI(
@@ -18,7 +18,7 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.post("/get_preview", response_model=dict)
-async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")]):
+async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")], model: str, teachme: bool):
     file_path = os.path.join(UPLOAD_FOLDER, svg_file.filename)
     
     # Read and save the uploaded file
@@ -26,9 +26,16 @@ async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file
         f.write(await svg_file.read())
 
     # Call the preview function (assuming it takes the file path)
-    await asyncio.to_thread(getPreview, file_path)
+    await asyncio.to_thread(getPreview, file_path, model, teachme)
 
     return {"message": "File uploaded successfully", "file_path": file_path}
+
+@app.post("/get_control", response_model=dict)
+async def get_control():
+
+    await asyncio.to_thread(teach)
+
+    return {"message": "Robot controll launched"}
 
 
 if __name__ == "__main__":

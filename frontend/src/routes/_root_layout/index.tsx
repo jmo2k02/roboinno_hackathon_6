@@ -52,6 +52,11 @@ Enjoy a seamless experience from concept to creation, without worrying about the
                       Generate from text
                     </Link>
                     </div>
+                    <div className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <Link to='/text'>
+                      Control yourself
+                    </Link>
+                    </div>
                   </div>
                 </div>
                 

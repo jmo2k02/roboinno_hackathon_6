@@ -1,21 +1,24 @@
 import numpy as np
 import roboticstoolbox as rtb
 import numpy as np 
+from typing import Any
 import matplotlib.pyplot as plt
 import spatialmath as sm
 import spatialgeometry as sg
 from swift import Swift
 import qpsolvers as qp
 import matplotlib.pyplot as plt
-from pathlib import Path#
-import time
+from pathlib import Path
+from roboticstoolbox.robot.ERobot import ERobot
 
-from utils import displayTrj, load_se3_path, interpolate_waypoints, cal_T
+from utils import displayTrj, load_se3_path, interpolate_waypoints, cal_T,angle_between,decay2, manipulability, choose_robot, perform_task_based_on_robot
 from controller import PI_controller
 
-backend = Swift()
 
-def runPreview():
+def sim(model: str,teachMe: bool):
+
+    bc_cone = 15
+
     displayPathPLT = False
     displayPathSwift = True
 
@@ -23,24 +26,31 @@ def runPreview():
 
     draw = "svg" #implemented -> [svg,T]
 
-    backend.launch(realtime=True, browser="google-chrome")
+    # Use swift for visualistion 
+    backend = Swift()
 
+    backend.launch(realtime=True, browser="google-chrome")
+        # camera settings
+    camara_point = np.array([-1.5,0.9,1.5])
+    view_point = np.array([0,0,0])
+    backend.set_camera_pose(camara_point,view_point)
     t = 0
     dt = 0.005
 
     # add robot 
     panda = rtb.models.Panda()
-    panda.q = panda.qr
+    panda = choose_robot(model)
+    perform_task_based_on_robot(panda)
+    #panda.q = panda.qr
     backend.add(panda)
-
+    backend.step(0)
     # add end-effector pose 
     T_ee_axes = sg.Arrow(0.1)
-
     # font
     if draw == "svg":
 
-        IMAGE_PATH = Path(__file__).parent / "data" / "robot_path_.csv"
-        file_path = str(IMAGE_PATH)
+        # Load file
+        file_path = Path(__file__).parent / "data" / "robot_path_.csv"  
         se3_path = load_se3_path(file_path) # in mm
 
         path_xyz = se3_path[:,:3,3]/1000 # [mm] -> [m] 
@@ -90,20 +100,20 @@ def runPreview():
             #displayTrj(backend,se3_path_rotated,diff = 25)
 
     # Visualize whiteboard
-    whiteboard = sg.Cuboid(scale=[0.5,0.01,0.8],color = "white")
-    blackboard = sg.Cuboid(scale=[0.52,0.01,0.82],color = "black")
+    whiteboard = sg.Cuboid(scale=[0.6,0.01,0.8],color = "white")
+    blackboard = sg.Cuboid(scale=[0.62,0.01,0.82],color = "black")
     whiteboard.T = sm.SE3.Trans(0.62,0,0.7) * sm.SE3.Rz(np.pi/2) 
     blackboard.T = sm.SE3.Trans(0.621,0,0.7) * sm.SE3.Rz(np.pi/2) 
     backend.add(whiteboard)
     backend.add(blackboard)
 
     # Visualize Optimization
-    radius_orientation_set = 0.30 * np.tan(np.radians(15))
+    radius_orientation_set = 0.30 * np.tan(np.radians(bc_cone))
     set_tool_orientation = sg.Arrow(0.3,0.0001,1,radius_orientation_set/0.3, color = [0,0.7569,0.7137,0.4])
-    tool_orientation = sg.Arrow(0.5,0.0055,0.02,0.01, color = [0,0.7569,0.7137])
+    tool_orientation = sg.Arrow(0.4,0.0055,0.01,0.01, color = [0,0.7569,0.7137])
     T_ee = panda.fkine(panda.q)
 
-    tool_orientation.T = cal_T(z = -T_ee.R[:,2],p = T_ee.A[:3,3])
+    tool_orientation.T = cal_T(z = -T_ee.R[:,2],p = T_ee.A[:3,3] - np.array([0,0,0]))
     #set_tool_orientation.T = cal_T(z = [1,0,0], p = T_ee.A[:3,3], offset = np.array([-0.3,0,0.0])) 
 
     backend.add(tool_orientation)
@@ -115,17 +125,16 @@ def runPreview():
 
     # Quadratic component of the objective fuction for qp
     λv = 1
-    Q = λv * np.eye(7)
+    Q = λv * np.eye(panda.n)
 
     # Linear compenent of objective function for qp
-    c = np.zeros(7)
+    c = np.zeros(panda.n)
 
-    ## Temporary commented out
-    # resolution = 10
+    resolution = 20
 
-    # spheres = [sg.Sphere(0.003, color = "black") for _ in range(int(len(xyz_mstrarj_rotated)/resolution))]
-    # for _,sphere in enumerate(spheres):
-    #     backend.add(sphere)
+    spheres = [sg.Sphere(0.003, color = [0,0.7569,0.7137]) for _ in range(int(len(xyz_mstrarj_rotated)/resolution))]
+    for _,sphere in enumerate(spheres):
+        backend.add(sphere)
 
     # This loop drives the robot to the start of the welding task
     arrived = False
@@ -136,7 +145,6 @@ def runPreview():
         #J_without = np.delete(J,3,axis=0)
         T_ee = panda.fkine(panda.q)
         T_ee_axes.T = T_ee.A
-
 
         # Calculates required end effector speed
         ev, arrived = rtb.p_servo(T_ee.A, xyz_mstrarj_rotated[0], gain=gain_servo, threshold=0.005, method='angle-axis') 
@@ -159,19 +167,50 @@ def runPreview():
         t += dt
 
         # step Visualisation
-        tool_orientation.T = cal_T(z = -T_ee.R[:,2],p = T_ee.A[:3,3])
+        tool_orientation.T = cal_T(z = -T_ee.R[:,2],p = T_ee.A[:3,3] - np.array([0,0,0]))
 
         # step visualisation
         backend.step(dt)
 
-    backend.add(set_tool_orientation)
+    if teachMe == True:
+        backend.add(set_tool_orientation)
 
-    i_sphere = 0
+
+
+    projected_roll_axis_vec = sg.Arrow(radius_orientation_set,0.0025,0.1,0.4, color = "blue")
+    constraint_left_line = sg.Arrow(0.18,0.0025,0.1,0.0, color = "red")
+    constraint_right_line = sg.Arrow(0.18,0.0025,0.1,0.0, color = "red")
+
+    # offsets
+    offset_orientation_set = np.array([-0.3,0,0])
+    offset_orientation_set_up = np.array([-0.31,0,0])
+    radius_orientation_set = offset_orientation_set[0] * np.tan(bc_cone)
+
+    projected_roll_axis = -T_ee.R[:,2] * np.array([0,1,1])
+    projected_roll_axis_normalized = projected_roll_axis/np.linalg.norm(projected_roll_axis)
+
+    constraint_left = sm.SO2(80, unit='deg').A @ projected_roll_axis_normalized[:2] 
+    constraint_right = sm.SO2(-80, unit='deg').A @ projected_roll_axis_normalized[:2]
+
+    offset_constraint = offset_orientation_set_up + radius_orientation_set * projected_roll_axis_normalized
+
+    projected_roll_axis_vec.T = cal_T(z = -projected_roll_axis, p = T_ee.A[:3,3], offset = offset_orientation_set_up)
+    constraint_left_line.T = cal_T(z = -np.hstack([constraint_left, 0]), p = T_ee.A[:3,3], offset = offset_constraint)
+    constraint_right_line.T = cal_T(z = -np.hstack([constraint_right, 0]), p = T_ee.A[:3,3], offset = offset_constraint)
+
+
+    cs_constraint = sg.Axes(0.1)
+    cs_constraint.T = cal_T(p = T_ee.A[:3,3], offset = offset_orientation_set_up)
+    if teachMe == True:
+        backend.add(cs_constraint)
+        backend.add(projected_roll_axis_vec)
+
 
     approx_integral = np.zeros(6)
     idx = 0
     int_pos = 0
     damper_sum = 0
+    i_sphere = 0
 
     while True:
 
@@ -183,18 +222,10 @@ def runPreview():
 
         T_ee = panda.fkine(panda.q)
 
-        # if idx % resolution == 0:
-
-        #     if T_ee.A[3,2] > 0.599:
-        #         spheres[i_sphere].T = T_ee.A
-        #         i_sphere += 1
-
-        if idx % 30 == 0:
-            point_axes = sg.Axes(0.005)
-            point = sg.Sphere(0.005, color = "yellow")
-            point.T = T_ee.A
-            backend.add(point)
-
+        if idx % resolution == 0:
+            if T_ee.A[0,3] > 0.599:
+                spheres[i_sphere].T = T_ee.A
+                i_sphere += 1
 
         # Printer
         ev, approx_integral = PI_controller(T_ee.A,T_ee_d.A,T_ee_d_next.A,approx_integral,dt = dt, Kp = 5,Ki = 3)
@@ -202,7 +233,7 @@ def runPreview():
 
         # the manipulability Jacobian
         λm = 1
-        Jm = panda.jacobm(panda.q, axes='trans')
+        Jm = panda.jacobm(panda.q, axes='all')
         c = λm * -Jm.reshape((panda.n,))
 
         # Calculates required end effector speed
@@ -210,33 +241,41 @@ def runPreview():
         beq = ev.reshape((3,))
 
         # inequality constrains 
-        # plane_normal = np.array([0, 0, 1])
-        # roll_axis_ee = Tee_printer.R[:,0]
-        # theta = angle_between(plane_normal,roll_axis_ee)
-        # phi = angle_between(-np.hstack([z_cabel[:2],0]),np.hstack([Tee_printer.R[:2,2],0]))
+        plane_normal = np.array([1, 0, 0])
+        roll_axis_ee = T_ee.R[:,2]
+        theta = angle_between(plane_normal,roll_axis_ee)
+        print(np.degrees(theta))
 
-        # if True: 
+        if True: 
 
-        #     projected_roll_axis = Tee_printer.R[:,0] * np.array([1,1,0])
-        #     projected_roll_axis_normalized = projected_roll_axis/np.linalg.norm(projected_roll_axis)
+            projected_roll_axis = -T_ee.R[:,2] * np.array([0,1,1])
             
-        #     constraint_left = sm.SO2(shifted_bc_cone, unit='deg').A @ projected_roll_axis_normalized[:2] 
-        #     constraint_right = sm.SO2(-shifted_bc_cone, unit='deg').A @ projected_roll_axis_normalized[:2]
+            projected_roll_axis_normalized = projected_roll_axis/np.linalg.norm(projected_roll_axis)
 
-        #     j_rot1 =  (J_printer[4,:] * constraint_right[0] - J_printer[3,:] * constraint_right[1]) 
-        #     j_rot2 =  (J_printer[4,:] * constraint_left[0] - J_printer[3,:] * constraint_left[1]) 
+            j_rot_single =  (J[4,:] * projected_roll_axis_normalized[2] - J[5,:] * projected_roll_axis_normalized[1]) 
+            
+            constraint_left = sm.SO2(80, unit='deg').A @ projected_roll_axis_normalized[1:] 
+            constraint_right = sm.SO2(-80, unit='deg').A @ projected_roll_axis_normalized[1:]
 
-        #     Ain = np.vstack([j_rot1, j_rot2])
-        #     bin = np.array([decay2(theta, bc_cone), decay2(theta, bc_cone)])
+            j_rot1 =  (J[4,:] * constraint_right[1] - J[5,:] * constraint_right[0]) 
+            j_rot2 =  (J[4,:] *constraint_left[1] - J[5,:] * constraint_left[0]) 
 
-        # solve for the joint velocities
-        # availible solvers: ['clarabel', 'cvxopt', 'daqp', 'ecos', 'highs', 'osqp', 'piqp', 'proxqp', 'qpalm', 'quadprog', 'scs', 'qpax']
-        # qd = np.zeros((8))
+            Ain = np.vstack([j_rot1, j_rot2])
+            bin = np.array([decay2(theta, bc_cone), decay2(theta, bc_cone)])
+            #bin = np.array([0, 0])
+
+        
+        projected_roll_axis_vec.T = cal_T(z = projected_roll_axis, p = T_ee.A[:3,3], offset = offset_orientation_set_up)
+        cs_constraint.T = cal_T(p = T_ee.A[:3,3], offset = offset_orientation_set_up)
+
+
+        #solve for the joint velocities
+        #availible solvers: ['clarabel', 'cvxopt', 'daqp', 'ecos', 'highs', 'osqp', 'piqp', 'proxqp', 'qpalm', 'quadprog', 'scs', 'qpax']
         qd = qp.solve_qp(Q, c, Ain, bin, Aeq, beq, lb=None, ub=None, solver='quadprog') 
         panda.qd = qd
 
         # step Visualisation
-        tool_orientation.T = cal_T(z = -T_ee.R[:,2],p = T_ee.A[:3,3])
+        tool_orientation.T = cal_T(z = -T_ee.R[:,2],p = T_ee.A[:3,3] - np.array([0,0,0]))
         set_tool_orientation.T = cal_T(z = [1,0,0], p = T_ee.A[:3,3], offset = np.array([-0.3,0,0.0])) 
 
         # simulation parameter 
@@ -249,43 +288,8 @@ def runPreview():
 
         # step visualisation
         backend.step(dt)
-    
-    # puma0 = rtb.models.Puma560()
-    # pumas = []
-    # num_robots = 20
-    # rotation = 2 * np.pi * ((num_robots - 1) / num_robots)
 
 
-    # for theta in np.linspace(0, rotation, num_robots):
-    #     base = sm.SE3.Rz(theta) * sm.SE3(2.8, 0, 0)
 
-    #     # Clone the robot
-    #     puma = rtb.ERobot(puma0)
-    #     puma.base = base
-    #     puma.q = puma0.qz
-    #     backend.add(puma)
-    #     pumas.append(puma)
-
-    # # The wave is a Gaussian that moves around the circle
-    # tt = np.linspace(0, num_robots, num_robots * 10)
-
-
-    # def gaussian(x, mu, sig):
-    #     return np.exp(-np.power(x - mu, 2.0) / (2 * np.power(sig, 2.0)))
-
-
-    # g = gaussian(tt, 5, 1)
-    # t = 0
-
-    # while True:
-    #     for i, puma in enumerate(pumas):
-    #         k = (t + i * 10) % len(tt)
-    #         puma.q = np.r_[0, g[k], -g[k], 0, 0, 0]
-
-    #         backend.step(0)
-    #         time.sleep(0.0001)
-
-    #     t += 1
-    print("Backend close")
-    backend.close()
-    backend._init()
+if __name__ == "__main__":
+    sim("frankie",techMe = False)

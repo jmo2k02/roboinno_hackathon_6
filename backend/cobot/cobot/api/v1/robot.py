@@ -76,20 +76,34 @@ async def run_robot_using_image(
     logger.info("Successfully stored file.")
 
 @router.post("/get_preview", response_model=dict)
-async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")]):
+async def get_preview(svg_file: Annotated[UploadFile, File(description="SVG file to upload for execution by robo simulation")], teachme: bool, model: str):
 
     url = "http://host.docker.internal:8001/get_preview"
 
     file_bytes = await svg_file.read()
 
     files = {
-        "svg_file": (svg_file.filename, io.BytesIO(file_bytes), "image/svg+xml")
+        "svg_file": (svg_file.filename, io.BytesIO(file_bytes), "image/svg+xml"),
     }
 
-    _ = await asyncio.to_thread(requests.post, url, files=files)
+    query = {
+            "model": model,
+            "teachme": teachme
+        }
+
+    _ = await asyncio.to_thread(requests.post, url, files=files, params=query)
 
     return {"message": "completed"}
 
+
+@router.post("/get_control", response_model=dict)
+async def get_control():
+
+    url = "http://host.docker.internal:8001/get_control"
+
+    _ = await asyncio.to_thread(requests.post, url)
+
+    return {"message": "completed"}
 
 
 

@@ -18,6 +18,7 @@ import { Route as RootlayoutVoiceImport } from './routes/_root_layout/voice'
 import { Route as RootlayoutUploadImport } from './routes/_root_layout/upload'
 import { Route as RootlayoutTextImport } from './routes/_root_layout/text'
 import { Route as RootlayoutEditorImport } from './routes/_root_layout/editor'
+import { Route as RootlayoutControlImport } from './routes/_root_layout/control'
 
 // Create/Update Routes
 
@@ -62,6 +63,12 @@ const RootlayoutEditorRoute = RootlayoutEditorImport.update({
   getParentRoute: () => RootlayoutRoute,
 } as any)
 
+const RootlayoutControlRoute = RootlayoutControlImport.update({
+  id: '/control',
+  path: '/control',
+  getParentRoute: () => RootlayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -72,6 +79,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof RootlayoutImport
       parentRoute: typeof rootRoute
+    }
+    '/_root_layout/control': {
+      id: '/_root_layout/control'
+      path: '/control'
+      fullPath: '/control'
+      preLoaderRoute: typeof RootlayoutControlImport
+      parentRoute: typeof RootlayoutImport
     }
     '/_root_layout/editor': {
       id: '/_root_layout/editor'
@@ -121,6 +135,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface RootlayoutRouteChildren {
+  RootlayoutControlRoute: typeof RootlayoutControlRoute
   RootlayoutEditorRoute: typeof RootlayoutEditorRoute
   RootlayoutTextRoute: typeof RootlayoutTextRoute
   RootlayoutUploadRoute: typeof RootlayoutUploadRoute
@@ -129,6 +144,7 @@ interface RootlayoutRouteChildren {
 }
 
 const RootlayoutRouteChildren: RootlayoutRouteChildren = {
+  RootlayoutControlRoute: RootlayoutControlRoute,
   RootlayoutEditorRoute: RootlayoutEditorRoute,
   RootlayoutTextRoute: RootlayoutTextRoute,
   RootlayoutUploadRoute: RootlayoutUploadRoute,
@@ -142,6 +158,7 @@ const RootlayoutRouteWithChildren = RootlayoutRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof RootlayoutRouteWithChildren
+  '/control': typeof RootlayoutControlRoute
   '/editor': typeof RootlayoutEditorRoute
   '/text': typeof RootlayoutTextRoute
   '/upload': typeof RootlayoutUploadRoute
@@ -151,6 +168,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/control': typeof RootlayoutControlRoute
   '/editor': typeof RootlayoutEditorRoute
   '/text': typeof RootlayoutTextRoute
   '/upload': typeof RootlayoutUploadRoute
@@ -162,6 +180,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_root_layout': typeof RootlayoutRouteWithChildren
+  '/_root_layout/control': typeof RootlayoutControlRoute
   '/_root_layout/editor': typeof RootlayoutEditorRoute
   '/_root_layout/text': typeof RootlayoutTextRoute
   '/_root_layout/upload': typeof RootlayoutUploadRoute
@@ -172,12 +191,21 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/editor' | '/text' | '/upload' | '/voice' | '/' | '/edit'
+  fullPaths:
+    | ''
+    | '/control'
+    | '/editor'
+    | '/text'
+    | '/upload'
+    | '/voice'
+    | '/'
+    | '/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/editor' | '/text' | '/upload' | '/voice' | '/' | '/edit'
+  to: '/control' | '/editor' | '/text' | '/upload' | '/voice' | '/' | '/edit'
   id:
     | '__root__'
     | '/_root_layout'
+    | '/_root_layout/control'
     | '/_root_layout/editor'
     | '/_root_layout/text'
     | '/_root_layout/upload'
@@ -214,12 +242,17 @@ export const routeTree = rootRoute
     "/_root_layout": {
       "filePath": "_root_layout.tsx",
       "children": [
+        "/_root_layout/control",
         "/_root_layout/editor",
         "/_root_layout/text",
         "/_root_layout/upload",
         "/_root_layout/voice",
         "/_root_layout/"
       ]
+    },
+    "/_root_layout/control": {
+      "filePath": "_root_layout/control.tsx",
+      "parent": "/_root_layout"
     },
     "/_root_layout/editor": {
       "filePath": "_root_layout/editor.tsx",

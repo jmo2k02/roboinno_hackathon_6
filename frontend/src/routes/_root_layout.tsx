@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link } from '@tanstack/react-router'
 import { useState } from 'react';
-import { Bell,  Home, Menu, MessageSquare, MicVocal, PencilRuler, UserCircle, LetterText } from 'lucide-react';
+import { Bell,  Home, Menu, MessageSquare, MicVocal, PencilRuler, UserCircle, LetterText, Joystick } from 'lucide-react';
 import { useLocation } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_root_layout')({
@@ -62,6 +62,12 @@ function RootLayout ()  {
           >
             <LetterText size={20} />
             {isSidebarOpen && <Link to='/text' className="ml-3">Generate from text</Link>}
+          </div>
+          <div 
+            className={`flex items-center px-4 py-3 ${location.pathname === '/control' ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'} cursor-pointer`}
+          >
+            <Joystick size={20} />
+            {isSidebarOpen && <Link to='/control' className="ml-3">Control yourself</Link>}
           </div>
         </nav>
         

@@ -89,6 +89,8 @@ export type GenerateSvgFromPromptApiV1SvgGenerateSvgFromPromptPostData = {
     body: BodyGenerateSvgFromPromptApiV1SvgGenerateSvgFromPromptPost;
     path?: never;
     query: {
+        model: string;
+        teachme: boolean;
         /**
          * Auth token
          */
@@ -231,6 +233,8 @@ export type GetPreviewApiV1RobotGetPreviewPostData = {
     body: BodyGetPreviewApiV1RobotGetPreviewPost;
     path?: never;
     query: {
+        teachme: boolean;
+        model: string;
         /**
          * Auth token
          */
@@ -258,6 +262,38 @@ export type GetPreviewApiV1RobotGetPreviewPostResponses = {
 };
 
 export type GetPreviewApiV1RobotGetPreviewPostResponse = GetPreviewApiV1RobotGetPreviewPostResponses[keyof GetPreviewApiV1RobotGetPreviewPostResponses];
+
+export type GetControlApiV1RobotGetControlPostData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Auth token
+         */
+        token: string;
+    };
+    url: '/api/v1/robot/get_control';
+};
+
+export type GetControlApiV1RobotGetControlPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetControlApiV1RobotGetControlPostError = GetControlApiV1RobotGetControlPostErrors[keyof GetControlApiV1RobotGetControlPostErrors];
+
+export type GetControlApiV1RobotGetControlPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetControlApiV1RobotGetControlPostResponse = GetControlApiV1RobotGetControlPostResponses[keyof GetControlApiV1RobotGetControlPostResponses];
 
 export type SummarizeTextApiV1GptsummarizePostData = {
     body: TextToSumUp;
