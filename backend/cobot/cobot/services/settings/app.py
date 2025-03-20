@@ -10,6 +10,7 @@ class AppSettings(BaseAppSettings):
     
     APP_NAME: str = "cobot"
     APP_VERSION: str = "0.1.0"
+    OPENAI_API_KEY: str = CHATGPTKEY
 
     @computed_field
     @property
